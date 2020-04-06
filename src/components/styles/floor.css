@@ -1,0 +1,23 @@
+#floor{
+    background-color: rgba(255,250,240,0.7)!important;
+}
+
+.nav a{
+    color:#343A40;
+}
+.nav a:hover{
+    color: #ff924c!important;  /* ffc107*/
+}
+.nav span{
+    color: #ff924c!important;
+    font-weight: bold;
+}
+#floor-down-mes{
+    font-size: smaller;
+    color: #bbb2b6;
+}
+.floor-downest-links a{
+    font-size: small;
+    font-stretch: condensed;
+    color: #bbb2b6;
+}

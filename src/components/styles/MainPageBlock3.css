@@ -1,0 +1,72 @@
+.dashboardcontainermainp{
+    background-color: rgba(52,58,64,0.9) !important;
+    perspective: 1000px!important;
+}
+.carddashboardmainpag3{
+    height: 40vmin!important;
+    position: relative!important;
+    background-color: rgb(43, 46, 52) !important;
+    padding: 0!important;
+    border-color: #ff924c!important;
+    border-width: 5px!important;
+}
+.carddashboardmainpag3>div{
+    height: 100% !important;
+    width: 100% !important;
+    position: relative!important;
+    margin: 0!important;
+    padding: 0!important;
+}
+.carddashboardmainpag3:hover .front-side-1{
+   transform: rotateY(180deg);
+    transition-duration: 2s;
+    transform-style: preserve-3d;
+}
+.carddashboardmainpag3:hover .back-side-1{
+    transform: rotateY(0deg);
+    transition-duration: 2s;
+    transform-style: preserve-3d;
+}
+.front-side-1{
+    backface-visibility: hidden!important;
+    position: relative!important;
+    height: 100% !important;
+    width: 100% !important;
+    margin: 0!important;
+    background-color: rgb(255,250,240) !important;
+    z-index: 10!important;
+    transform: rotateY(0deg);
+    transition-duration: 2s;
+    transform-style: preserve-3d;
+    border-width: 0!important;
+    border-color: #ff924c!important;
+    border-radius: 0!important;
+
+}
+.front-side-1>img{
+    height: 20% !important;
+    width: 20% !important;
+    align-self: center!important;
+}
+.back-side-1{
+    transform: rotateY(-180deg);
+    transition-duration: 2s;
+    transform-style: preserve-3d;
+    margin: 0!important;
+    position: absolute!important;
+    height: 100% !important;
+    width: 100% !important;
+    background-color: #A6894E!important;
+    z-index: 5!important;
+    top: 0vmin!important;
+    left: 0vmin!important;
+    border-color: #ff924c!important;
+    border-radius: 0!important;
+}
+.header-Mainpageb3{
+    text-align: center;
+    color: floralwhite;
+    font-size: 9vmin;
+    font-weight: bold;
+}
+

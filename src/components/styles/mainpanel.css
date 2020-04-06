@@ -1,0 +1,59 @@
+#navmainid{         /*ffc107*/
+    z-index: 1000!important;
+    opacity: 0.9;
+}
+#navmainid a{         /*ffc107*/
+    color: #ff924c!important;
+
+}
+.nav-item a{
+    color: floralwhite!important;
+}
+.nav-item a:hover{
+    color: #ff924c!important;
+}
+.btn-mp-1 {
+    color: #ff924c!important;
+    border-color: #ff924c!important;
+}
+.btn-mp-1:hover {
+    background-color: floralwhite!important;
+}
+.btn-mp-1:active {
+    background-color: floralwhite!important;
+}
+.btn-mp-1:focus {
+    border-color: #ff924c!important;
+    box-shadow: 0 0 0 0.1rem #ff924c!important;}
+
+.form-control:focus {
+    border-color: #ff924c!important;
+    box-shadow: 0 0 0 0.1rem #ff924c!important;}
+.form-control{
+    background-color: floralwhite!important;
+}
+.dropdown-menu{
+    background-color: #343A40!important;
+}
+.dropdown-item:hover{
+    background-color: #403a36 !important;
+}
+.dropdown-divider{
+    background-color: #2b2e34 !important;
+    border-color: #2b2e34 !important;
+}
+.hovertoppanel1{
+    transform: translateY(-10vmin) !important;
+    transition-duration: 500ms!important;
+}
+.hovertoppanel2{
+    transform: translateY(0vmin) !important;
+    transition-duration: 500ms!important;
+
+}
+.cerberbtn{
+    position: absolute;
+    z-index: -1;
+    width: 15vmax;
+    height: 3vmax;
+}

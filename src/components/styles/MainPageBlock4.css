@@ -1,0 +1,28 @@
+.finishcardmainpage{
+    background-color: rgba(43, 46, 52, 0.9) !important;;
+}
+.finishcardmainpage>.card{
+    background-color: floralwhite!important;
+}
+.finishinviteheadermainpage{
+    font-weight: bold!important;
+    font-size: 11vmin!important;
+    color: rgb(43, 46, 52) !important;;
+}
+.btn-mb2 {
+    color: #ff924c!important;
+    border-color: #ff924c!important;
+    background-color:  #fbffca !important;
+    margin-left: 1% !important;
+    margin-right: 1% !important;
+    font-size: 8vmin!important;
+    width: 80% !important;
+}
+.btn-mb2:hover {
+    background-color: #A6894E!important;
+}
+.btn-mb2:active {
+    background-color: #fbffca !important;
+}
+.btn-mb2:focus {
+    box-shadow: 0 0 0 0.1rem #ff924c!important;}

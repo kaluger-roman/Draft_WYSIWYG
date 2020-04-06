@@ -1,0 +1,8 @@
+.carousel-inner img {
+    width: 100vmax!important;
+    height: 90vmin !important;
+    margin: 0 auto;
+}
+#carouselExampleCaptions{
+    z-index: -1!important;
+}

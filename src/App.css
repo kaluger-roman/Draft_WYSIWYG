@@ -1,5 +1,18 @@
+body{
+  background-image: url("./../public/8643201bb419407c2653c20476c25e8c.jpg");
+  background-repeat: round;
+  background-size: initial ;
+  overflow-x: hidden;
+}
+.backgr{
+  background-image: url("./../public/8643201bb419407c2653c20476c25e8c.jpg");
+  background-repeat: round;
+  background-size: initial ;
+}
 .App {
   text-align: center;
+  position: relative;
+  z-index: 1;
 }
 
 .App-logo {
