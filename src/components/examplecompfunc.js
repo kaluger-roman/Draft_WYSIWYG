@@ -19,7 +19,14 @@ const mapStateToProps=state=>{
         exampleprops1:state.exinit1,
     }
 };
-const mapDispatchToProps={
-    exampleAction,
+const mapDispatchToProps=dispatch=>{            //два варианта см выпуск 58 айти камасутры
+    return {
+        exampleAction: () => dispatch(exampleAction()),
+    }
+};
+const mapDispatchToPropsV2=()=>{
+    return {
+        exampleAction: exampleAction,
+    }
 };
 export default connect(mapStateToProps,mapDispatchToProps)(FunctionalComp);

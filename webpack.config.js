@@ -13,16 +13,36 @@ module.exports={
         path: path.resolve(__dirname, 'dist')
     },
     plugins:[
-        new HtmlWebpackPlugin({
-            template: "./src/index.html"
-        }),
         new CleanWebpackPlugin(),
         new MiniCssExtractPlugin({
             filename:  "[name].[hash].bundle.css",
-        })
+            chunkFilename: '[id].css',
+        }),
+        new HtmlWebpackPlugin({
+            template: "./src/index.html",
+        }),
     ],
     module: {
         rules: [
+
+            {
+                test: /\.css$/,
+                use: [{
+                    loader: MiniCssExtractPlugin.loader,
+                    options: {
+                        hmr: true,
+                        reloadAll:true,
+                    }
+                }
+                    ,
+                    {
+                        loader: 'css-loader',
+                    },
+                ],
+                exclude: /\.module\.css$/
+            },
+
+
             {
                 test: /\.css$/,
                 use:[{
@@ -32,8 +52,18 @@ module.exports={
                         reloadAll:true,
                     }
                 }
-                ,'css-loader']
+                ,
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            modules: true,
+                            importLoaders: true,
+                        }
+                    },
+                ],
+                include: /\.module\.css$/
             },
+
             {
                test:/\.(png|gif|svg|jpg)$/,
                use:['file-loader']
@@ -70,7 +100,13 @@ module.exports={
         }
     },
     devServer: {
-        port:4200
+        port:4200,
+        historyApiFallback: {
+            rewrites: [
+                { from: /^\/(\.)*/, to: '/' },
+                { from: /^\/(\.)*\/(\.)*/, to: '/' },
+            ]
+        }
     },
     devtool: "source-map",
 };

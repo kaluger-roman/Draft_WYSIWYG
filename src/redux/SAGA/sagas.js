@@ -1,11 +1,11 @@
-import {takeEvery,put,call} from 'redux-saga/effects';
-import {EXAMPLE_ASYNC_TYPE_ACTION, SCROLL_UNDEFINED_ACTION} from "./actiontypes";
-import {exampleAsyncAction} from "./actions";
+import {takeEvery,put,call,select} from 'redux-saga/effects';
+import {SCROLL_UNDEFINED_ACTION} from "../actiontypes";
+import {exampleAsyncAction} from "../actions";
 import * as $ from "jquery";
 import {useSelector} from "react-redux";
-import {store} from "../index";
+import {store} from "../StorageRedux";
+import ROUTECONSTANTS from './../../Routing/ROUTECONSTANTS'
 export function* sagaWatcher() {
-   yield takeEvery(EXAMPLE_ASYNC_TYPE_ACTION, sagaWorker);
    yield takeEvery(SCROLL_UNDEFINED_ACTION, sagaScrollWorker);
 }
 
@@ -14,7 +14,9 @@ function* sagaScrollWorker() {
 }
 
 async function ScrollEffect() {
+    let curroute=select(state => state.common.CurPage);
     /////////////////////кнопки стартовая стр
+    if(curroute===ROUTECONSTANTS.HOME)
     {
         let btn = document.getElementById('ntn-90');
         let rect = btn.getBoundingClientRect();
@@ -35,6 +37,7 @@ async function ScrollEffect() {
         }
     }
     /////////////////////видос над кнопками главная стр
+    if(curroute===ROUTECONSTANTS.HOME)
     {
         let btn1 = document.getElementById('maincard1');
         let rect1 = btn1.getBoundingClientRect();
@@ -55,6 +58,7 @@ async function ScrollEffect() {
         }
     }
     ///////////////////////карточка главная стр внизу
+    if(curroute===ROUTECONSTANTS.HOME)
     {
         let btn=document.getElementById('maincard2');
         let rect=btn.getBoundingClientRect();

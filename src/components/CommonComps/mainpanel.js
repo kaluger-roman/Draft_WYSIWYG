@@ -1,23 +1,16 @@
 import React, {useCallback, useEffect} from 'react';
-import ReactDOM from 'react-dom';
 import {useDispatch, useSelector} from "react-redux";
-import './styles/mainpanel.css';
+import '../styles/CommonComponentsStyles/mainpanel.css';
 import * as $ from 'jquery';
-import {ScrollDownAction, ScrollUpAction} from "../redux/actions";
-
+import {NavLink} from "react-router-dom";
+import {Link} from "react-router-dom";
 
 export default function MainPanel(props) {
-   /* const panelvisibleselector=useSelector((state)=>{
-        return state.mainpage.isshown;
-    });
-    const scrollselector=useSelector((state)=>{
-        return state.mainpage.scroll
-    });*/
 
     return(
         <React.Fragment>
             <nav id='navmainid' className="navbar navbar-expand-lg navbar-collapse container-fluid bg-dark position-fixed">
-                <a className="navbar-brand text-warning " href="#"><h1>PactaX</h1></a>
+                <NavLink className="navbar-brand text-warning " to="/"><h1>PactaX</h1></NavLink>
                 <button className="navbar-toggler   " type="button" data-toggle="collapse"
                         data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -27,25 +20,25 @@ export default function MainPanel(props) {
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav mr-auto">
                         <li className="nav-item active">
-                            <a className="nav-link" href="#">Home <span className="sr-only">(current)</span></a>
+                            <NavLink className="nav-link" to="/fdjmm">Dropdown <span className="sr-only">(current)</span></NavLink>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="#">Link</a>
+                            <NavLink className="nav-link" to="/constructor" type='text/html'>Конструктор</NavLink>
                         </li>
                         <li className="nav-item dropdown">
-                            <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            <NavLink className="nav-link dropdown-toggle" to="#" id="navbarDropdown" role="button"
                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Dropdown
-                            </a>
+                            </NavLink>
                             <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a className="dropdown-item" href="#">Action</a>
-                                <a className="dropdown-item" href="#">Another action</a>
+                                <Link className="dropdown-item" to="#">Action</Link>
+                                <Link className="dropdown-item" to="#">Another action</Link>
                                 <div className="dropdown-divider"></div>
-                                <a className="dropdown-item" href="#">Something else here</a>
+                                <Link className="dropdown-item" to="#">Something else here</Link>
                             </div>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link " href="#">Disabled</a>
+                            <NavLink className="nav-link " to="#">Disabled</NavLink>
                         </li>
                     </ul>
                     <form className="form-inline my-2 my-lg-0">

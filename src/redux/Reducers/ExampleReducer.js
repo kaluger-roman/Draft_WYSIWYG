@@ -1,4 +1,4 @@
-import {EXAMPLE_ASYNC_TYPE_ACTION, EXAMPLE_TYPE_ACTION} from "./actiontypes";
+import {EXAMPLE_ASYNC_TYPE_ACTION, EXAMPLE_TYPE_ACTION} from "../actiontypes";
 
 const IntialState={
     exinit:0,

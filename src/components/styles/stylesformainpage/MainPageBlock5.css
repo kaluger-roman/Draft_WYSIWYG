@@ -1,0 +1,27 @@
+.containerblock5mainpage{
+    position: relative!important;
+    background-image: url("../../../../public/1539792498139182581.jpg");
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center center;
+    height: 150vmin!important;
+    width: 100vmax!important;
+    padding: 20vmin 15vmax!important;
+}
+.mainpageblock5card{
+    position: relative!important;
+    border-color: #343A40;
+    border-width: 0.3vmin;
+    border-style: solid;
+    border-radius: 2vmin;
+    height: 100%!important;
+    background-color: floralwhite;
+    padding: 0!important;
+}
+.headercardmainpage5block{
+    padding: 0!important;
+    margin: 0!important;
+    height: 20vmin;
+    background-color: rgba(0, 0, 0, 0.03);;
+    border-bottom: #343A40 0.3vmin solid;
+}

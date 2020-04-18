@@ -54,6 +54,13 @@ height: 100% !important;
 .btn-mb1:focus {
     box-shadow: 0 0 0 0.1rem #ff924c!important;}
 
+
+
+.mysuperclass{
+    background-color: #2b2e34;
+    height:100px;
+}
+
 /*.hoverbtnsmainpage1block1{*/
 /*    position: relative;*/
 /*    will-change: transform!important;*/

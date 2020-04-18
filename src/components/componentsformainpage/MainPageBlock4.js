@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import ReactDOM from 'react-dom';
 import {useDispatch, useSelector} from "react-redux";
-import './styles/MainpageBlock4.css';
+import '../styles/stylesformainpage/MainPageBlock4.css';
 import * as $ from 'jquery';
 export default function MainPageBlock4(props) {
     return (

@@ -1,37 +1,21 @@
 const types= require( "./actiontypes");
 
-
-export function exampleAction() {
-    return{
-        type:types.EXAMPLE_TYPE_ACTION,
-        payload:2
-    }
-}
-export function ScrollDownAction() {
-    return{
-        type:types.SCROLL_DOWN_ACTION,
-        payload:false
-    }
-}
-export function ScrollUpAction() {
-    return{
-        type:types.SCROLL_UP_ACTION,
-        payload:true
-    }
-}
 export function OpenCloseHelpMessenger() {
     return{
         type:types.CLICK_HELP_MESSAGE_BUTTON,
-        //payload:true
     }
 }
 export function ScrollUndefindAction() {
-  //  console.log(types.SCROLL_UNDEFINED_ACTION);
-    const act={
+    return  {
         type: types.SCROLL_UNDEFINED_ACTION,
         payload: pageYOffset
     };
-    return act;
+}
+export function ChangePage(curLocation) {
+    return  {
+        type: types.CHANGE_PAGE,
+        payload: curLocation
+    };
 }
 export function exampleAsyncAction() {
     return async (dispatch,getState)=>{

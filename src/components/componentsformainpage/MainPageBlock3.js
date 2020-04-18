@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import ReactDOM from 'react-dom';
 import {useDispatch, useSelector} from "react-redux";
-import './styles/MainpageBlock3.css';
+import '../styles/stylesformainpage/MainPageBlock3.css';
 import * as $ from 'jquery';
 import CardforMainPageBlock3 from "./cardforMainPageBlock3";
 

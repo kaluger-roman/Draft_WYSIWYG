@@ -1,49 +1,53 @@
 import React, {useEffect} from 'react';
-import ReactDOM from 'react-dom';
+import RouteConstants from './Routing/ROUTECONSTANTS'
 import './App.css';
-import { ExampleCompClass} from "./components/examplecomponent";
-import FunctionalComp from "./components/examplecompfunc";
-import FunctionalCompDefault from "./components/exampledefaultexportfunccomp";
-import MainPanel from "./components/mainpanel";
-import MainPageCarousel from "./components/carouselmainpage";
-import Floor from "./components/floor";
-import MainpageBlock1 from "./components/mainpageblock1";
-import MainpageBlock2 from "./components/mainpageblock2";
-import MainpageBlock3 from "./components/MainPageBlock3";
-import MainPageBlock4 from "./components/MainPageBlock4";
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link,
+    Redirect,
+} from "react-router-dom";
+import MainPanel from "./components/CommonComps/mainpanel";
+import Floor from "./components/CommonComps/floor";
 import {useDispatch, useSelector} from "react-redux";
-import {ScrollDownAction, ScrollUndefindAction, ScrollUpAction} from "./redux/actions";
-import HelpMessanging from "./components/HelpMessanging";
+import {ScrollUndefindAction} from "./redux/actions";
+import HelpMessanging from "./components/CommonComps/HelpMessanging";
+import ConstructorApp from "./components/ConstructorComponents/ConstructorApp";
+import MainPageContentContainer from "./components/componentsformainpage/MainPageContentContainer";
 
 
 function App() {
-    const dispatch=useDispatch();
-
-
-    useEffect(()=>{
-
+    const dispatch = useDispatch();
+    useEffect(() => {
         window.addEventListener('scroll', function f1() {
-                //console.log('я скролю1');
                 dispatch(ScrollUndefindAction());
                 return function cleanup() {
-                    window.removeEventListener('scroll',  f1);
-                    //console.log('я скролю2');
+                    window.removeEventListener('scroll', f1);
                 };
-        }
+            }
         );
     });
-  return (
-    <div className="App container-fluid p-0 m-0" >
-      <MainPanel/>
-      <MainPageCarousel/>
-      <MainpageBlock1/>
-      <MainpageBlock3/>
-      <MainpageBlock2/>
-      <MainPageBlock4/>
-      <Floor/>
-      <HelpMessanging/>
-    </div>
-  );
+    return (
+        <Router>
+            <div className="App container-fluid p-0 m-0">
+                <MainPanel/>
+                <Switch>
+                    <Route exact path={RouteConstants.HOME}>
+                        <MainPageContentContainer/>
+                    </Route>
+                    <Route path={RouteConstants.CONSTRUCTOR}>
+                        <ConstructorApp/>
+                    </Route>
+                    <Route path="*">
+                        <Redirect to={RouteConstants.HOME}/>
+                    </Route>
+                </Switch>
+                <Floor/>
+                <HelpMessanging/>
+            </div>
+        </Router>
+    );
 }
 
 export default App;

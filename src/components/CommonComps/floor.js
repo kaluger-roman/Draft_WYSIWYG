@@ -2,8 +2,10 @@ import React, {useEffect} from 'react';
 import ReactDOM from 'react-dom';
 import {useDispatch, useSelector} from "react-redux";
 import * as $ from 'jquery';
-import './styles/floor.css'
+import '../styles/CommonComponentsStyles/floor.css'
 export default function Floor(props) {
+
+
 
     return (
         <React.Fragment>
