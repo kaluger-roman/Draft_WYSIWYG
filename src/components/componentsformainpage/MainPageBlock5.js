@@ -13,7 +13,6 @@ export default function MainpageBlock5(props) {
                     <div className='container-fluid headercardmainpage5block'>
                     </div>
                     <div>
-
                     </div>
                 </div>
             </div>

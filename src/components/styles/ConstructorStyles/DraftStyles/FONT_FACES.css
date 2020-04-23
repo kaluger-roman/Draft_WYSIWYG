@@ -1,0 +1,693 @@
+@font-face {
+    font-family: 'AACH';
+    src: url(/public/fonts/AACH.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'ACCN';
+    src: url(/public/fonts/ACCN.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'ACDM';
+    src: url(/public/fonts/ACDM.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Adventure';
+    src: url(/public/fonts/Adventure.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'ADVR';
+    src: url(/public/fonts/ADVR.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'AMBS';
+    src: url(/public/fonts/AMBS.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Amelia_DG';
+    src: url(/public/fonts/Amelia_DG.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'ANTQ';
+    src: url(/public/fonts/ANTQ.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'ARBT';
+    src: url(/public/fonts/ARBT.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'ARTS';
+    src: url(/public/fonts/ARTS.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'ASTR';
+    src: url(/public/fonts/ASTR.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'AVNT';
+    src: url(/public/fonts/AVNT.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'A_Stamper_Bold';
+    src: url(/public/fonts/A_Stamper_Bold.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'BABT';
+    src: url(/public/fonts/BABT.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'BALT';
+    src: url(/public/fonts/BALT.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'BASK';
+    src: url(/public/fonts/BASK.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'BAUH';
+    src: url(/public/fonts/BAUH.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'BENG';
+    src: url(/public/fonts/BENG.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'BETS';
+    src: url(/public/fonts/BETS.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Binner_Di';
+    src: url(/public/fonts/Binner_Di.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'BITS';
+    src: url(/public/fonts/BITS.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Blood';
+    src: url(/public/fonts/Blood.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'BODN';
+    src: url(/public/fonts/BODN.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Boyarsky';
+    src: url(/public/fonts/Boyarsky.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'BRDW';
+    src: url(/public/fonts/BRDW.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'BREZ';
+    src: url(/public/fonts/BREZ.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'BRSH';
+    src: url(/public/fonts/BRSH.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'BTYP';
+    src: url(/public/fonts/BTYP.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Burlak';
+    src: url(/public/fonts/Burlak.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'CALG';
+    src: url(/public/fonts/CALG.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'CALIGRAP';
+    src: url(/public/fonts/CALIGRAP.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Calligraph';
+    src: url(/public/fonts/Calligraph.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'CASL';
+    src: url(/public/fonts/CASL.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Casper';
+    src: url(/public/fonts/Casper.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'CENT';
+    src: url(/public/fonts/CENT.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'CHAN';
+    src: url(/public/fonts/CHAN.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'CHIC';
+    src: url(/public/fonts/CHIC.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'CHNS';
+    src: url(/public/fonts/CHNS.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'CLAS';
+    src: url(/public/fonts/CLAS.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'COLN';
+    src: url(/public/fonts/COLN.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'COMP';
+    src: url(/public/fonts/COMP.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Compact';
+    src: url(/public/fonts/Compact.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'COOP';
+    src: url(/public/fonts/COOP.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'CORL';
+    src: url(/public/fonts/CORL.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'CRST';
+    src: url(/public/fonts/CRST.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'CRWN';
+    src: url(/public/fonts/CRWN.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'DECR';
+    src: url(/public/fonts/DECR.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'DERB';
+    src: url(/public/fonts/DERB.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'DOMC';
+    src: url(/public/fonts/DOMC.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Doorjam';
+    src: url(/public/fonts/Doorjam.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'dsbb';
+    src: url(/public/fonts/dsbb.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'DS_Eraser2';
+    src: url(/public/fonts/DS_Eraser2.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'DS_SonOf_Black';
+    src: url(/public/fonts/DS_SonOf_Black.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'DS_Zombie_Cyr';
+    src: url(/public/fonts/DS_Zombie_Cyr.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'ELCT';
+    src: url(/public/fonts/ELCT.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'ERIK';
+    src: url(/public/fonts/ERIK.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'EURO';
+    src: url(/public/fonts/EURO.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'FAIR';
+    src: url(/public/fonts/FAIR.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'FIES';
+    src: url(/public/fonts/FIES.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Fiesta';
+    src: url(/public/fonts/Fiesta.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Flash';
+    src: url(/public/fonts/Flash.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'FLOW';
+    src: url(/public/fonts/FLOW.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'FSTL';
+    src: url(/public/fonts/FSTL.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'FUSN';
+    src: url(/public/fonts/FUSN.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'FUTE';
+    src: url(/public/fonts/FUTE.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'FUTR';
+    src: url(/public/fonts/FUTR.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Futura_E';
+    src: url(/public/fonts/Futura_E.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'GENV';
+    src: url(/public/fonts/GENV.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'GeoC';
+    src: url(/public/fonts/GeoC.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Georgia';
+    src: url(/public/fonts/Georgia.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Georgiab';
+    src: url(/public/fonts/Georgiab.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Georgiai';
+    src: url(/public/fonts/Georgiai.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Georgiaz';
+    src: url(/public/fonts/Georgiaz.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'GILS';
+    src: url(/public/fonts/GILS.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'GOTH';
+    src: url(/public/fonts/GOTH.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'GOUD';
+    src: url(/public/fonts/GOUD.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'GRNT';
+    src: url(/public/fonts/GRNT.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Groto';
+    src: url(/public/fonts/Groto.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'HAIR';
+    src: url(/public/fonts/HAIR.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'HCND';
+    src: url(/public/fonts/HCND.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'HEBR';
+    src: url(/public/fonts/HEBR.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'HELT';
+    src: url(/public/fonts/HELT.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'HEMS';
+    src: url(/public/fonts/HEMS.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'HLVF';
+    src: url(/public/fonts/HLVF.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'HOVR';
+    src: url(/public/fonts/HOVR.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'INFO';
+    src: url(/public/fonts/INFO.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Irina_CTT';
+    src: url(/public/fonts/Irina_CTT.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Izhitsa';
+    src: url(/public/fonts/Izhitsa.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'IZHT';
+    src: url(/public/fonts/IZHT.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Jasper';
+    src: url(/public/fonts/Jasper.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'JOUR';
+    src: url(/public/fonts/JOUR.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'JSNS';
+    src: url(/public/fonts/JSNS.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'KALK';
+    src: url(/public/fonts/KALK.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'KINO';
+    src: url(/public/fonts/KINO.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'KORN';
+    src: url(/public/fonts/KORN.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'KursivC';
+    src: url(/public/fonts/KursivC.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'LATN';
+    src: url(/public/fonts/LATN.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'LCDN';
+    src: url(/public/fonts/LCDN.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Liana';
+    src: url(/public/fonts/Liana.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'LITR';
+    src: url(/public/fonts/LITR.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Loki_Cola';
+    src: url(/public/fonts/Loki_Cola.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Matrix';
+    src: url(/public/fonts/Matrix.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Megen';
+    src: url(/public/fonts/Megen.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'MEGN';
+    src: url(/public/fonts/MEGN.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'MINI';
+    src: url(/public/fonts/MINI.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'MNTB';
+    src: url(/public/fonts/MNTB.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'MONC';
+    src: url(/public/fonts/MONC.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Monumento';
+    src: url(/public/fonts/Monumento.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Monumento_BW';
+    src: url(/public/fonts/Monumento_BW.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Monumento_Gr';
+    src: url(/public/fonts/Monumento_Gr.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Monumento_Nr';
+    src: url(/public/fonts/Monumento_Nr.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'MSTR';
+    src: url(/public/fonts/MSTR.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'MURM';
+    src: url(/public/fonts/MURM.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Nervous';
+    src: url(/public/fonts/Nervous.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'NEWG';
+    src: url(/public/fonts/NEWG.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'New_Zelek';
+    src: url(/public/fonts/New_Zelek.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Notice';
+    src: url(/public/fonts/Notice.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'OLDS';
+    src: url(/public/fonts/OLDS.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Old_Town';
+    src: url(/public/fonts/Old_Town.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'OPTM';
+    src: url(/public/fonts/OPTM.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'OPUS';
+    src: url(/public/fonts/OPUS.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Paladin';
+    src: url(/public/fonts/Paladin.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'PALD';
+    src: url(/public/fonts/PALD.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'PALT';
+    src: url(/public/fonts/PALT.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Parade';
+    src: url(/public/fonts/Parade.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'PARK';
+    src: url(/public/fonts/PARK.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'PEIG';
+    src: url(/public/fonts/PEIG.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Pioneer';
+    src: url(/public/fonts/Pioneer.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Plakat';
+    src: url(/public/fonts/Plakat.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'POST';
+    src: url(/public/fonts/POST.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Poster';
+    src: url(/public/fonts/Poster.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'PRES';
+    src: url(/public/fonts/PRES.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'PRGM';
+    src: url(/public/fonts/PRGM.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Proun';
+    src: url(/public/fonts/Proun.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Proun75_C';
+    src: url(/public/fonts/Proun75_C.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Proun95_C';
+    src: url(/public/fonts/Proun95_C.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'PRTG';
+    src: url(/public/fonts/PRTG.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'REVU';
+    src: url(/public/fonts/REVU.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'RIBN';
+    src: url(/public/fonts/RIBN.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Roland';
+    src: url(/public/fonts/Roland.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'ROMC';
+    src: url(/public/fonts/ROMC.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Rubius';
+    src: url(/public/fonts/Rubius.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Rurintania';
+    src: url(/public/fonts/Rurintania.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'SAKR';
+    src: url(/public/fonts/SAKR.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'SALN';
+    src: url(/public/fonts/SALN.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'SCHL';
+    src: url(/public/fonts/SCHL.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Scriptorama';
+    src: url(/public/fonts/Scriptorama.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'SERP';
+    src: url(/public/fonts/SERP.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Serpentine';
+    src: url(/public/fonts/Serpentine.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Sirclive';
+    src: url(/public/fonts/Sirclive.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'SLAV';
+    src: url(/public/fonts/SLAV.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Slipstream';
+    src: url(/public/fonts/Slipstream.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'SLPS';
+    src: url(/public/fonts/SLPS.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'SOUV';
+    src: url(/public/fonts/SOUV.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'TECH';
+    src: url(/public/fonts/TECH.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Terminator';
+    src: url(/public/fonts/Terminator.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'TIFF';
+    src: url(/public/fonts/TIFF.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Topaz';
+    src: url(/public/fonts/Topaz.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'TRAC';
+    src: url(/public/fonts/TRAC.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'TXTB';
+    src: url(/public/fonts/TXTB.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'TYPW';
+    src: url(/public/fonts/TYPW.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'UNIC';
+    src: url(/public/fonts/UNIC.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'VANT';
+    src: url(/public/fonts/VANT.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'VERN';
+    src: url(/public/fonts/VERN.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Vesna';
+    src: url(/public/fonts/Vesna.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'VETR';
+    src: url(/public/fonts/VETR.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'WENA';
+    src: url(/public/fonts/WENA.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'WNDS';
+    src: url(/public/fonts/WNDS.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'XENI';
+    src: url(/public/fonts/XENI.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Xenia';
+    src: url(/public/fonts/Xenia.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Xenia_Cond';
+    src: url(/public/fonts/Xenia_Cond.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Zombie';
+    src: url(/public/fonts/Zombie.TTF) format('truetype');
+}
+@font-face {
+    font-family: 'Zrnic_Cyr';
+    src: url(/public/fonts/Zrnic_Cyr.TTF) format('truetype');
+}
+

@@ -3,12 +3,13 @@ import ChangeLocationSubscriberHOC from "../HOCS/ChangeLocationSubscriberHOC";
 import {useDispatch, useSelector} from "react-redux";
 import HelpMessanging from "../CommonComps/HelpMessanging";
 import * as St from './../styles/ConstructorStyles/ConstructorPageStyles.module.css'
+import {RichTextEditor} from "./RichTextEditor";
 
 function ConstructorApp() {
     const dispatch = useDispatch();
     return (
-        <div className={`container-fluid p-0 m-0 ${St.ConstructorPage}`}>
-
+        <div className={` ${St.ConstructorPage} `}>
+            <RichTextEditor/>
         </div>
     );
 }
