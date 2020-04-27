@@ -1,7 +1,6 @@
 import './FONT_FACES.css'
 import {FONT_FAMILIES_STYLES} from './FONT_FAMILIES_STYLES'
-
-export const styleMap = {
+export const inlineStyleMap = {
     CODE: {
         backgroundColor: 'rgba(0, 0, 0, 0.05)',
         fontFamily: '"ANTQ", "Inconsolata", "Menlo", "Consolas", monospace',

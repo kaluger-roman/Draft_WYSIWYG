@@ -16,7 +16,7 @@ export const store=createStore(rootReducer, compose(
         ExampleMiddleware,
         saga,
     ),
-    devTools
+    //devTools
 ));
 
 saga.run(sagaWatcher);

@@ -1,3 +1,4 @@
+//ВНИМАНИе!!!!!!! СУФФИКСЫ В ХАРДКОДЕ, МЕНЯТЬ ОПАСНО
 export const FONT_FAMILIES_STYLES ={
     AACH_FONT_FAMILY: {
         fontFamily: '"AACH", sans-serif',

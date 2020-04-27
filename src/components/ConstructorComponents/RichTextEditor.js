@@ -2,9 +2,10 @@ import * as St from './../styles/ConstructorStyles/RichTextEditorStyle.module.cs
 import React, {useMemo} from "react";
 import {Editor, EditorState, RichUtils, getDefaultKeyBinding, CompositeDecorator, DefaultDraftBlockRenderMap} from 'draft-js';
 import * as Immutable from 'immutable'
-import {styleMap} from "../styles/ConstructorStyles/DraftStyles/INLINE_DRAFT_STYLES_JS";
+import {inlineStyleMap} from "../styles/ConstructorStyles/DraftStyles/INLINE_DRAFT_STYLES_JS";
 import DropMenuMaterialUi from "../CommonComps/DropMenuMaterialUi";
 import {DraftMainContext} from "../CommonComps/Contexts";
+import * as REGEXP_SUFS from './../styles/ConstructorStyles/DraftStyles/RegexpForStyleSuffiks'
 
 export class RichTextEditor extends React.Component {
     constructor(props) {
@@ -50,18 +51,25 @@ export class RichTextEditor extends React.Component {
 
     this.selectionbefore=undefined;
     this.contextvalue={
-        saveSelectionStateActionWrapper: this.saveSelectionStateActionWrapper
+        saveSelectionStateActionWrapper: this.saveSelectionStateActionWrapper,
        }
 //////////////////////////////
     }
 
     _saveSelectionStateActionWrapper(wrapFunc) {
-        return (e) => {
-            e.preventDefault();
-            const {editorState} = this.state;
+        return (e,...params) => {
+            if (e) {
+                e.preventDefault();
+            }
+            let {editorState} = this.state;
             this.selectionbefore = editorState.getSelection();
-            wrapFunc(e);
-            setTimeout(() => this.onChange(EditorState.forceSelection(editorState, this.selectionbefore)), 0);
+            if(wrapFunc){
+                wrapFunc(e);
+            }
+            if(params.length>0){
+                wrapFunc(...params);
+            }
+            setTimeout(() => this.onChange(EditorState.forceSelection(this.state.editorState, this.selectionbefore)), 0);
         }
     };
     //////////////////////////////
@@ -178,14 +186,26 @@ export class RichTextEditor extends React.Component {
         );
     }
 
-    _toggleInlineStyle(inlineStyle) {
-        this.onChange(
-            RichUtils.toggleInlineStyle(
-                this.state.editorState,
-                inlineStyle
-            )
-        );
+    _toggleInlineStyle(inlineStyle, styleSuffiksToReplace) { //styleSuffiksToReplace -суффикс стиля, если есть то должен заменить стиль с тем же суффиксом, например, для шрифтов, заменить старый, а не тыкнуть поверх
+       if (styleSuffiksToReplace){
+           const currentStyle = this.state.editorState.getCurrentInlineStyle();//вообще говоря возвращает набор стилей для самого левого края выделения
+           const DuplicateStyle=Array.from(currentStyle.values()).find(
+               (value => {
+                   let regexp = new RegExp(REGEXP_SUFS.REGEXP_FONT_FAMILY_SUFFIKS);
+                   if (regexp.test(value))
+                       return true;
+               }));
+           this.toggleInlineStyle(DuplicateStyle);
+       }
+       setTimeout(()=>{  this.onChange(
+           RichUtils.toggleInlineStyle(
+               this.state.editorState,
+               inlineStyle
+           )
+       );
+       }, 0)
     }
+
 
      blockRendererFn(contentBlock) {
 
@@ -245,7 +265,7 @@ export class RichTextEditor extends React.Component {
                 <div className={`${St.RichEditoreditor}`} onClick={this.focus}>
                     <Editor
                         blockStyleFn={blockStyleFn}
-                        customStyleMap={styleMap}
+                        customStyleMap={inlineStyleMap}
                         editorState={editorState}
                         handleKeyCommand={this.handleKeyCommand}
                         keyBindingFn={this.mapKeyToEditorCommand}
