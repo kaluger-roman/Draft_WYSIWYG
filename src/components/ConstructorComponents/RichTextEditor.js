@@ -1,5 +1,5 @@
 import * as St from './../styles/ConstructorStyles/RichTextEditorStyle.module.css';
-import React, {useMemo} from "react";
+import React, {useMemo, useRef} from "react";
 import {Editor, EditorState, RichUtils, getDefaultKeyBinding, CompositeDecorator, DefaultDraftBlockRenderMap} from 'draft-js';
 import * as Immutable from 'immutable'
 import {inlineStyleMap} from "../styles/ConstructorStyles/DraftStyles/INLINE_DRAFT_STYLES_JS";
@@ -56,20 +56,66 @@ export class RichTextEditor extends React.Component {
 //////////////////////////////
     }
 
-    _saveSelectionStateActionWrapper(wrapFunc) {
+    /*_saveSelectionStateActionWrapper(wrapFunc) {
         return (e,...params) => {
             if (e) {
                 e.preventDefault();
             }
             let {editorState} = this.state;
             this.selectionbefore = editorState.getSelection();
-            if(wrapFunc){
+            if(wrapFunc && e){
                 wrapFunc(e);
             }
-            if(params.length>0){
+            if(wrapFunc && params.length>0){
                 wrapFunc(...params);
             }
-            setTimeout(() => this.onChange(EditorState.forceSelection(this.state.editorState, this.selectionbefore)), 0);
+            console.log('перед установкой таймаута в выделении'+this.state.editorState.getCurrentInlineStyle());
+            setTimeout(() =>{
+                    console.log('в таймауте выделения 1 '+this.state.editorState.getCurrentInlineStyle());
+
+                    const curinlinestate=this.state.editorState.getCurrentInlineStyle();
+                this.onChange((EditorState.setInlineStyleOverride(EditorState.forceSelection(this.state.editorState, this.selectionbefore), curinlinestate)))
+                    console.log('в таймауте выделени2 '+this.state.editorState.getCurrentInlineStyle());
+
+                }
+                , 0);
+           // setTimeout(() => this.onChange(/!*EditorState.forceSelection*!/(EditorState.setInlineStyleOverride(this.state.editorState, this.state.editorState.getCurrentInlineStyle())/!*, this.selectionbefore*!/)), 0);
+        }
+    };*/
+    _saveSelectionStateActionWrapper(wrapFunc) {
+        return (e,...params) => {
+            if (e) {
+                e.preventDefault();
+            }
+
+            let {editorState} = this.state;
+            this.selectionbefore = editorState.getSelection();
+            console.log('пер функ в таймауте выделения '+this.state.editorState.getCurrentInlineStyle());
+            if(wrapFunc && e){
+                wrapFunc(e);
+            }
+            if(wrapFunc && params.length>0){
+                wrapFunc(...params);
+            }
+            //запомнить тут стили
+            console.log('перед таймауте выделения '+this.state.editorState.getCurrentInlineStyle());
+             setTimeout(() =>{
+                 //применить запомненные учитывая изменения
+                 console.log('в таймауте выделения1 '+this.state.editorState.getCurrentInlineStyle());
+                 const curinlinestate=this.state.editorState.getCurrentInlineStyle();
+                 this.onChange((EditorState.setInlineStyleOverride(EditorState.forceSelection(this.state.editorState, this.selectionbefore), curinlinestate)))
+                 console.log('в таймауте выделения2 '+this.state.editorState.getCurrentInlineStyle());
+
+             }
+             , 0);
+           /* setTimeout(() =>{
+                    console.log('в таймауте выделения1 '+this.state.editorState.getCurrentInlineStyle());
+                    const curinlinestate=this.state.editorState.getCurrentInlineStyle();
+                    this.onChange((EditorState.setInlineStyleOverride(EditorState.forceSelection(this.state.editorState, this.selectionbefore), curinlinestate)))
+                    console.log('в таймауте выделения2 '+this.state.editorState.getCurrentInlineStyle());
+
+                }
+                , 0);*/
         }
     };
     //////////////////////////////
@@ -186,7 +232,7 @@ export class RichTextEditor extends React.Component {
         );
     }
 
-    _toggleInlineStyle(inlineStyle, styleSuffiksToReplace) { //styleSuffiksToReplace -суффикс стиля, если есть то должен заменить стиль с тем же суффиксом, например, для шрифтов, заменить старый, а не тыкнуть поверх
+  /*  _toggleInlineStyle(inlineStyle, styleSuffiksToReplace) { //styleSuffiksToReplace -суффикс стиля, если есть то должен заменить стиль с тем же суффиксом, например, для шрифтов, заменить старый, а не тыкнуть поверх
        if (styleSuffiksToReplace){
            const currentStyle = this.state.editorState.getCurrentInlineStyle();//вообще говоря возвращает набор стилей для самого левого края выделения
            const DuplicateStyle=Array.from(currentStyle.values()).find(
@@ -195,17 +241,56 @@ export class RichTextEditor extends React.Component {
                    if (regexp.test(value))
                        return true;
                }));
-           this.toggleInlineStyle(DuplicateStyle);
+           if (DuplicateStyle) {
+               console.log('дубликат '+DuplicateStyle)
+               this.toggleInlineStyle(DuplicateStyle);
+           }
        }
-       setTimeout(()=>{  this.onChange(
+        console.log('перед установкой таймаута '+this.state.editorState.getCurrentInlineStyle());
+
+        setTimeout(()=>{
+           console.log('тоглю '+inlineStyle)
+          console.log('перед тоглом '+this.state.editorState.getCurrentInlineStyle());
+           this.onChange(
            RichUtils.toggleInlineStyle(
                this.state.editorState,
                inlineStyle
-           )
-       );
+           ))
+          console.log('после тогла '+this.state.editorState.getCurrentInlineStyle())
        }, 0)
-    }
+    }*/
 
+    _toggleInlineStyle(inlineStyle, styleSuffiksToReplace) { //styleSuffiksToReplace -суффикс стиля, если есть то должен заменить стиль с тем же суффиксом, например, для шрифтов, заменить старый, а не тыкнуть поверх
+        if (styleSuffiksToReplace){
+            const currentStyle = this.state.editorState.getCurrentInlineStyle();//вообще говоря возвращает набор стилей для самого левого края выделения
+            const DuplicateStyle=Array.from(currentStyle.values()).find(
+                (value => {
+                    let regexp = new RegExp(REGEXP_SUFS.REGEXP_FONT_FAMILY_SUFFIKS);
+                    if (regexp.test(value))
+                        return true;
+                }));
+            if (DuplicateStyle) {
+                console.log('дубликат '+DuplicateStyle)
+                this.onChange(
+                    RichUtils.toggleInlineStyle(
+                        this.state.editorState,
+                        DuplicateStyle
+                    ))
+            }
+        }
+        console.log('перед установкой таймаута '+this.state.editorState.getCurrentInlineStyle());
+
+        setTimeout(()=>{
+            console.log('тоглю '+inlineStyle)
+            console.log('перед тоглом '+this.state.editorState.getCurrentInlineStyle());
+            this.onChange(
+                RichUtils.toggleInlineStyle(
+                    this.state.editorState,
+                    inlineStyle
+                ));
+            console.log('после тогла '+this.state.editorState.getCurrentInlineStyle())
+        }, 0)
+    }
 
      blockRendererFn(contentBlock) {
 
@@ -226,7 +311,7 @@ export class RichTextEditor extends React.Component {
     }*/
 
     render() {
-
+       // console.log('перерисовка editor'+this.state.editorState.getCurrentInlineStyle())
         const {editorState} = this.state;
         ///////////////
         let urlInput;
@@ -264,6 +349,7 @@ export class RichTextEditor extends React.Component {
                 {urlInput}
                 <div className={`${St.RichEditoreditor}`} onClick={this.focus}>
                     <Editor
+                        textAlignment='left'
                         blockStyleFn={blockStyleFn}
                         customStyleMap={inlineStyleMap}
                         editorState={editorState}
@@ -387,14 +473,13 @@ const BlockStyleControls = (props) => {
 var INLINE_STYLES = [
     {label: 'Bold', style: 'BOLD'},
     {label: 'Italic', style: 'ITALIC'},
-    {label: 'Underline', style: 'UNDERLINE'},
+    {label: 'Underline', style: 'Adventure_FONT_FAMILY'},
     {label: 'Monospace', style: 'ANTQ_FONT_FAMILY'},
     {label: 'TestColor', style: 'TestColor'},
 ];
 
 const InlineStyleControls = React.memo((props) => {
-
-    const currentStyle = props.editorState.getCurrentInlineStyle();//вообще говоря возвращает набор стилей для самого левого края выделения
+   const currentStyle = props.editorState.getCurrentInlineStyle();//вообще говоря возвращает набор стилей для самого левого края выделения
     return (
         <div className={`${St.RichEditorcontrols}`}>
 

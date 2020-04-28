@@ -34,9 +34,7 @@ const StyledMenu = withStyles(ConstructorDropMenuStyle)((props) => (
 ));
 
 const StyledMenuItem = withStyles((theme)=>StandardConstrMenuStyle(theme))(MenuItem);
-
 const CommonListIMenuItems = React.memo((props) => {
-    // let [SelectedItemUpdate, setSelectedItemUpdate] = React.useState(false);
     let {onToggle, currentStyle, shouldMenuSelectedItemUpdate}=props;
     let { saveSelectionStateActionWrapper}=useContext(DraftMainContext);
     let [oldSelectedItem, setOldSelectedItem] = React.useState({Elem:null, indexinret:null});
@@ -53,10 +51,12 @@ const CommonListIMenuItems = React.memo((props) => {
                 <StyledMenuItem
                     key={type}
                     selected={currentStyle.has(type)}
-                    //active={currentStyle.has(FONT_FAMILIES_STYLES[type])}
-                    onClick={()=>{
+                    disabled={currentStyle.has(type)}
+                    onMouseDown={(e)=>{
+                        if (!e.target.disabled)
+                            console.log(type);
                         saveSelectionStateActionWrapper(onToggle)(null, type, REGEXP_FONT_FAMILY_SUFFIKS);
-                       // setSelectedItemKey((prevState)=>{ console.log(prevState); return {prevKey:prevState.curKey, curKey:type}});
+
                     }}
                     type={FONT_FAMILIES_STYLES.type}>
                     <ListItemIcon>
@@ -70,9 +70,10 @@ const CommonListIMenuItems = React.memo((props) => {
     },[]);
 
     if (shouldMenuSelectedItemUpdate) {
-        //let findOldSelectIndex = ret.findIndex((value) => value.props.selected === true);
+    // console.log(oldSelectedItem);
         let findNewSelectIndex = ret.findIndex((value) => currentStyle.has(value.key));
-        if (findNewSelectIndex!==oldSelectedItem.indexinret) {
+        //console.log(findNewSelectIndex);
+        if (findNewSelectIndex!==oldSelectedItem.indexinret) {//ЕСЛИ ЗАДИЗЭБЛИТЬ КНОПКИ МОЖНО НЕ ПРОВЕРЯТЬ ТАКИЕ УСЛОВИЯ И ПЕРЕДЕЛАТЬ
             if (oldSelectedItem.Elem) {
                 let MyListItemText = withStyles({
                     primary: {
@@ -81,14 +82,17 @@ const CommonListIMenuItems = React.memo((props) => {
                 })(ListItemText);
                 let oldProps = oldSelectedItem.Elem.props;
                 ret[oldSelectedItem.indexinret] =
-                    <StyledMenuItem  {...oldProps} selected={false} key={oldSelectedItem.Elem.key}>
+                    <StyledMenuItem  {...oldProps} selected={false} disabled={false} key={oldSelectedItem.Elem.key}>
                         <ListItemIcon>
                             <CreateOutlinedIcon fontSize="large"/>
                         </ListItemIcon>
                         <MyListItemText primary={`${oldSelectedItem.Elem.key}`}/>
                     </StyledMenuItem>
             }
-            if (findNewSelectIndex && findNewSelectIndex !== -1) {
+            if(ret[findNewSelectIndex] && findNewSelectIndex>-1){
+                setOldSelectedItem({Elem: ret[findNewSelectIndex], indexinret: findNewSelectIndex});}
+        }
+            if (findNewSelectIndex>-1 && findNewSelectIndex !== -1) {
                 let newkey = ret[findNewSelectIndex].key;
                 let MyListItemText = withStyles({
                     primary: {
@@ -97,36 +101,16 @@ const CommonListIMenuItems = React.memo((props) => {
                 })(ListItemText);
                 let newProps = ret[findNewSelectIndex].props;
                 ret[findNewSelectIndex] =
-                    <StyledMenuItem   {...newProps} selected={true} key={newkey}>
+                    <StyledMenuItem   {...newProps} selected={true} disabled={true} key={newkey}>
                         <ListItemIcon>
                             <CreateOutlinedIcon fontSize="large"/>
                         </ListItemIcon>
-                        <MyListItemText primary={`заменено`}/>
+                        <MyListItemText primary={ret[findNewSelectIndex].key}/>
                     </StyledMenuItem>
-                setOldSelectedItem({Elem: ret[findNewSelectIndex], indexinret: findNewSelectIndex});
+
             }
-        }
     }
 
-    /*console.log('ищу индексы')
-    let findOldSelectIndex=ret.findIndex((value)=>value.key===selectedItemKey.prevKey);
-    let findNewSelectIndex=ret.findIndex((value)=>value.key===selectedItemKey.curKey);
-    if (findOldSelectIndex!==-1)
-        ret[findOldSelectIndex]= <StyledMenuItem
-            key={selectedItemKey.prevKey}
-            selected=false
-            onClick={()=>{
-                saveSelectionStateActionWrapper(onToggle)(null, type, REGEXP_FONT_FAMILY_SUFFIKS);
-                setSelectedItemKey((prevState)=>{ console.log(prevState); return {prevKey:prevState.curKey, curKey:type}});
-            }}
-            type={FONT_FAMILIES_STYLES.type}>
-            <ListItemIcon>
-                <CreateOutlinedIcon fontSize="large"/>
-            </ListItemIcon>
-            <MyListItemText primary={`${type}`}/>
-        </StyledMenuItem>
-    if (findNewSelectIndex!==-1)
-        ret[findNewSelectIndex].props.selected=true;*/
 
     return (
         <React.Fragment>
@@ -140,8 +124,9 @@ export default React.memo(function CustomizedMenus(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [shouldMenuSelectedItemUpdate, setShouldMenuSelectedItemUpdate] = React.useState(false);
 
+    //console.log('перерисовка menu'+currentStyle);
 
-    console.log('я считаю ');
+    //console.log(' '+currentStyle);
     let { saveSelectionStateActionWrapper}=useContext(DraftMainContext);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -158,7 +143,7 @@ export default React.memo(function CustomizedMenus(props) {
                 aria-haspopup="true"
                 variant="contained"
                 color="primary"
-                onClick={(e)=>{saveSelectionStateActionWrapper(handleClick)(e)}}
+                onMouseDown={(e)=>{saveSelectionStateActionWrapper(handleClick)(e)}}
                 onFocus={(e)=>{e.currentTarget.blur()}}
                 tabIndex={-1}
             >
