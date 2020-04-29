@@ -87,35 +87,22 @@ export class RichTextEditor extends React.Component {
             if (e) {
                 e.preventDefault();
             }
-
             let {editorState} = this.state;
             this.selectionbefore = editorState.getSelection();
-            console.log('пер функ в таймауте выделения '+this.state.editorState.getCurrentInlineStyle());
+            let statebefore=this.state.editorState;
+
             if(wrapFunc && e){
                 wrapFunc(e);
             }
             if(wrapFunc && params.length>0){
-                wrapFunc(...params);
+                statebefore= wrapFunc(...params, statebefore);
             }
-            //запомнить тут стили
-            console.log('перед таймауте выделения '+this.state.editorState.getCurrentInlineStyle());
-             setTimeout(() =>{
-                 //применить запомненные учитывая изменения
-                 console.log('в таймауте выделения1 '+this.state.editorState.getCurrentInlineStyle());
-                 const curinlinestate=this.state.editorState.getCurrentInlineStyle();
-                 this.onChange((EditorState.setInlineStyleOverride(EditorState.forceSelection(this.state.editorState, this.selectionbefore), curinlinestate)))
-                 console.log('в таймауте выделения2 '+this.state.editorState.getCurrentInlineStyle());
 
+             setTimeout(() =>{
+                 const curinlinestyles=statebefore.getCurrentInlineStyle();
+                 this.onChange((EditorState.setInlineStyleOverride(EditorState.forceSelection(statebefore, this.selectionbefore), curinlinestyles)))
              }
              , 0);
-           /* setTimeout(() =>{
-                    console.log('в таймауте выделения1 '+this.state.editorState.getCurrentInlineStyle());
-                    const curinlinestate=this.state.editorState.getCurrentInlineStyle();
-                    this.onChange((EditorState.setInlineStyleOverride(EditorState.forceSelection(this.state.editorState, this.selectionbefore), curinlinestate)))
-                    console.log('в таймауте выделения2 '+this.state.editorState.getCurrentInlineStyle());
-
-                }
-                , 0);*/
         }
     };
     //////////////////////////////
@@ -260,9 +247,9 @@ export class RichTextEditor extends React.Component {
        }, 0)
     }*/
 
-    _toggleInlineStyle(inlineStyle, styleSuffiksToReplace) { //styleSuffiksToReplace -суффикс стиля, если есть то должен заменить стиль с тем же суффиксом, например, для шрифтов, заменить старый, а не тыкнуть поверх
+    _toggleInlineStyle(inlineStyle, styleSuffiksToReplace, statebefore) { //styleSuffiksToReplace -суффикс стиля, если есть то должен заменить стиль с тем же суффиксом, например, для шрифтов, заменить старый, а не тыкнуть поверх
         if (styleSuffiksToReplace){
-            const currentStyle = this.state.editorState.getCurrentInlineStyle();//вообще говоря возвращает набор стилей для самого левого края выделения
+            const currentStyle = statebefore.getCurrentInlineStyle();//вообще говоря возвращает набор стилей для самого левого края выделения
             const DuplicateStyle=Array.from(currentStyle.values()).find(
                 (value => {
                     let regexp = new RegExp(REGEXP_SUFS.REGEXP_FONT_FAMILY_SUFFIKS);
@@ -270,26 +257,11 @@ export class RichTextEditor extends React.Component {
                         return true;
                 }));
             if (DuplicateStyle) {
-                console.log('дубликат '+DuplicateStyle)
-                this.onChange(
-                    RichUtils.toggleInlineStyle(
-                        this.state.editorState,
-                        DuplicateStyle
-                    ))
+                statebefore=RichUtils.toggleInlineStyle(statebefore, DuplicateStyle)
             }
         }
-        console.log('перед установкой таймаута '+this.state.editorState.getCurrentInlineStyle());
-
-        setTimeout(()=>{
-            console.log('тоглю '+inlineStyle)
-            console.log('перед тоглом '+this.state.editorState.getCurrentInlineStyle());
-            this.onChange(
-                RichUtils.toggleInlineStyle(
-                    this.state.editorState,
-                    inlineStyle
-                ));
-            console.log('после тогла '+this.state.editorState.getCurrentInlineStyle())
-        }, 0)
+        statebefore= RichUtils.toggleInlineStyle(statebefore, inlineStyle);
+        return statebefore;
     }
 
      blockRendererFn(contentBlock) {

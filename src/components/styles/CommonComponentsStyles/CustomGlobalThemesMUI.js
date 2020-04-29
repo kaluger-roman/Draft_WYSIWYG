@@ -11,5 +11,8 @@ export const StandardThemeDropMenu=createMuiTheme({
         MuiMenu:{
             disableScrollLock: true,
         },
+        MuiPopover:{
+            onMouseDown:(e)=>e.preventDefault(),
+        }
     },
 });

@@ -143,7 +143,7 @@ export default React.memo(function CustomizedMenus(props) {
                 aria-haspopup="true"
                 variant="contained"
                 color="primary"
-                onMouseDown={(e)=>{saveSelectionStateActionWrapper(handleClick)(e)}}
+                onMouseDown={(e)=>{e.preventDefault();saveSelectionStateActionWrapper(handleClick)(e)}}
                 onFocus={(e)=>{e.currentTarget.blur()}}
                 tabIndex={-1}
             >
@@ -155,6 +155,8 @@ export default React.memo(function CustomizedMenus(props) {
                 keepMounted
                 open={Boolean(anchorEl)}
                 onClose={(e)=>{saveSelectionStateActionWrapper(handleClose)(e)}}
+                mouseEvent={(e)=>{e.preventDefault(); e.stopPropagation()}}
+                onClickAway={(e)=>{e.preventDefault();  e.stopPropagation()}}
             >
                 <CommonListIMenuItems
                     onToggle={onToggle}
