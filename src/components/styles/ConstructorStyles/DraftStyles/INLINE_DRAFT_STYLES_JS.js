@@ -1,5 +1,6 @@
 import './FONT_FACES.css'
 import {FONT_FAMILIES_STYLES} from './FONT_FAMILIES_STYLES'
+import {FONT_SIZE_STYLES} from "./FONT_SIZE_STYLES";
 export const inlineStyleMap = {
     CODE: {
         backgroundColor: 'rgba(0, 0, 0, 0.05)',
@@ -10,7 +11,8 @@ export const inlineStyleMap = {
     TestColor: {
         color: '#FF4422'
     },
-    ...FONT_FAMILIES_STYLES
+    ...FONT_FAMILIES_STYLES,
+    ...FONT_SIZE_STYLES,
 };
 
 /*

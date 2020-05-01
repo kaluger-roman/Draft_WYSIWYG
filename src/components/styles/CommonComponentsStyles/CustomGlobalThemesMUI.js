@@ -8,7 +8,7 @@ export const StandardThemeDropMenu=createMuiTheme({
         MuiTrapFocus: {
             disableEnforceFocus : true,
         },
-        MuiMenu:{
+        MuiMenu: {
             disableScrollLock: true,
         },
         MuiPopover:{

@@ -5,7 +5,7 @@ import * as Immutable from 'immutable'
 import {inlineStyleMap} from "../styles/ConstructorStyles/DraftStyles/INLINE_DRAFT_STYLES_JS";
 import DropMenuMaterialUi from "../CommonComps/DropMenuMaterialUi";
 import {DraftMainContext} from "../CommonComps/Contexts";
-import * as REGEXP_SUFS from './../styles/ConstructorStyles/DraftStyles/RegexpForStyleSuffiks'
+import {ItalicBoldStylesFont} from "../CommonComps/MenuItemsListsCollection/ItalicBoldStylesFont";
 
 export class RichTextEditor extends React.Component {
     constructor(props) {
@@ -56,34 +56,8 @@ export class RichTextEditor extends React.Component {
 //////////////////////////////
     }
 
-    /*_saveSelectionStateActionWrapper(wrapFunc) {
-        return (e,...params) => {
-            if (e) {
-                e.preventDefault();
-            }
-            let {editorState} = this.state;
-            this.selectionbefore = editorState.getSelection();
-            if(wrapFunc && e){
-                wrapFunc(e);
-            }
-            if(wrapFunc && params.length>0){
-                wrapFunc(...params);
-            }
-            console.log('перед установкой таймаута в выделении'+this.state.editorState.getCurrentInlineStyle());
-            setTimeout(() =>{
-                    console.log('в таймауте выделения 1 '+this.state.editorState.getCurrentInlineStyle());
-
-                    const curinlinestate=this.state.editorState.getCurrentInlineStyle();
-                this.onChange((EditorState.setInlineStyleOverride(EditorState.forceSelection(this.state.editorState, this.selectionbefore), curinlinestate)))
-                    console.log('в таймауте выделени2 '+this.state.editorState.getCurrentInlineStyle());
-
-                }
-                , 0);
-           // setTimeout(() => this.onChange(/!*EditorState.forceSelection*!/(EditorState.setInlineStyleOverride(this.state.editorState, this.state.editorState.getCurrentInlineStyle())/!*, this.selectionbefore*!/)), 0);
-        }
-    };*/
     _saveSelectionStateActionWrapper(wrapFunc) {
-        return (e,...params) => {
+        return async (e,...params) => {
             if (e) {
                 e.preventDefault();
             }
@@ -91,18 +65,19 @@ export class RichTextEditor extends React.Component {
             this.selectionbefore = editorState.getSelection();
             let statebefore=this.state.editorState;
 
-            if(wrapFunc && e){
-                wrapFunc(e);
-            }
-            if(wrapFunc && params.length>0){
-                statebefore= wrapFunc(...params, statebefore);
+            if(wrapFunc && !e && !params.length>0){
+                await wrapFunc();
             }
 
-             setTimeout(() =>{
-                 const curinlinestyles=statebefore.getCurrentInlineStyle();
-                 this.onChange((EditorState.setInlineStyleOverride(EditorState.forceSelection(statebefore, this.selectionbefore), curinlinestyles)))
-             }
-             , 0);
+            if(wrapFunc && e){
+               await wrapFunc(e);
+            }
+            if(wrapFunc && params.length>0){
+                statebefore= await wrapFunc(...params, statebefore);
+            }
+            const curinlinestyles=statebefore.getCurrentInlineStyle();
+            console.log("styles"+curinlinestyles)
+            this.onChange((EditorState.setInlineStyleOverride(EditorState.forceSelection(statebefore, this.selectionbefore), curinlinestyles)))
         }
     };
     //////////////////////////////
@@ -196,16 +171,15 @@ export class RichTextEditor extends React.Component {
             return;
         }
 
-        if (e.keyCode === 8 /* backspace */) {
+        /*if (e.keyCode === 8 /!* backspace *!/) {//гадость делает ошибку при удалении в начале пустого документа
             const newEditorState = RichUtils.onBackspace(
                 this.state.editorState,
             );
             if (newEditorState !== this.state.editorState) {
-               // this.onChange(newEditorState);
+               this.onChange(newEditorState);
             }
             return;
-        }
-
+        }*/
 
         return getDefaultKeyBinding(e);
     }
@@ -219,40 +193,13 @@ export class RichTextEditor extends React.Component {
         );
     }
 
-  /*  _toggleInlineStyle(inlineStyle, styleSuffiksToReplace) { //styleSuffiksToReplace -суффикс стиля, если есть то должен заменить стиль с тем же суффиксом, например, для шрифтов, заменить старый, а не тыкнуть поверх
-       if (styleSuffiksToReplace){
-           const currentStyle = this.state.editorState.getCurrentInlineStyle();//вообще говоря возвращает набор стилей для самого левого края выделения
-           const DuplicateStyle=Array.from(currentStyle.values()).find(
-               (value => {
-                   let regexp = new RegExp(REGEXP_SUFS.REGEXP_FONT_FAMILY_SUFFIKS);
-                   if (regexp.test(value))
-                       return true;
-               }));
-           if (DuplicateStyle) {
-               console.log('дубликат '+DuplicateStyle)
-               this.toggleInlineStyle(DuplicateStyle);
-           }
-       }
-        console.log('перед установкой таймаута '+this.state.editorState.getCurrentInlineStyle());
 
-        setTimeout(()=>{
-           console.log('тоглю '+inlineStyle)
-          console.log('перед тоглом '+this.state.editorState.getCurrentInlineStyle());
-           this.onChange(
-           RichUtils.toggleInlineStyle(
-               this.state.editorState,
-               inlineStyle
-           ))
-          console.log('после тогла '+this.state.editorState.getCurrentInlineStyle())
-       }, 0)
-    }*/
-
-    _toggleInlineStyle(inlineStyle, styleSuffiksToReplace, statebefore) { //styleSuffiksToReplace -суффикс стиля, если есть то должен заменить стиль с тем же суффиксом, например, для шрифтов, заменить старый, а не тыкнуть поверх
+    async _toggleInlineStyle(inlineStyle, styleSuffiksToReplace, statebefore) { //styleSuffiksToReplace -суффикс стиля, если есть то должен заменить стиль с тем же суффиксом, например, для шрифтов, заменить старый, а не тыкнуть поверх
         if (styleSuffiksToReplace){
             const currentStyle = statebefore.getCurrentInlineStyle();//вообще говоря возвращает набор стилей для самого левого края выделения
+            let regexp = new RegExp(styleSuffiksToReplace);
             const DuplicateStyle=Array.from(currentStyle.values()).find(
                 (value => {
-                    let regexp = new RegExp(REGEXP_SUFS.REGEXP_FONT_FAMILY_SUFFIKS);
                     if (regexp.test(value))
                         return true;
                 }));
@@ -281,9 +228,11 @@ export class RichTextEditor extends React.Component {
    /* toggleEditorReadOnly(readonly) {
         setTimeout(() => this.setState({EditorReadOnly: readonly}), 0)
     }*/
+    componentDidMount() {
 
+
+    }
     render() {
-       // console.log('перерисовка editor'+this.state.editorState.getCurrentInlineStyle())
         const {editorState} = this.state;
         ///////////////
         let urlInput;
@@ -348,18 +297,6 @@ export class RichTextEditor extends React.Component {
     }
 }
 
-/*const styleMap = {
-    CODE: {
-        backgroundColor: 'rgba(0, 0, 0, 0.05)',
-        fontFamily: '"Inconsolata", "Menlo", "Consolas", monospace',
-        fontSize: 16,
-        padding: 2,
-    },
-    TestColor: {
-        color: '#FF4422'
-    }
-};*/
-
 function blockStyleFn(block) {
     switch (block.getType()) {
         case 'blockquote':
@@ -391,9 +328,6 @@ class StyleButton extends React.Component {
         );
     }
 }
-
-
-
 
 let Examplewrappercomp=(props)=>{
 
@@ -457,8 +391,24 @@ const InlineStyleControls = React.memo((props) => {
 
            < DropMenuMaterialUi onToggle={props.onToggle}
                                 currentStyle={currentStyle}
+                                menuType='FONT_FAMILY_PICKER'
            />
-
+            < DropMenuMaterialUi onToggle={props.onToggle}
+                                 currentStyle={currentStyle}
+                                 menuType='COLOR_PICKER'
+            />
+            < DropMenuMaterialUi onToggle={props.onToggle}
+                                 currentStyle={currentStyle}
+                                 menuType='FONT_SIZE_PICKER'
+            />
+            < DropMenuMaterialUi onToggle={props.onToggle}
+                                 currentStyle={currentStyle}
+                                 menuType='COLOR_BG_FILL_PICKER'
+            />
+            <ItalicBoldStylesFont
+                onToggle={props.onToggle}
+                currentStyle={currentStyle}
+            />
             {INLINE_STYLES.map((type) =>
                 <StyleButton
                     key={type.label}
