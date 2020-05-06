@@ -1,17 +1,21 @@
 .EditorContainer{
-    width: 100%;
-    height: 60vmin;
+    width: 90vmax;
+    height: 80vmin;
     position: relative;
-    background-color: rgba(15, 165, 115, 0.27);
-
+    background-color: rgb(243, 255, 221);
 }
 
-.RichEditoreditor {
-    border-top: 1px solid #ddd;
-    cursor: text;
-    font-size: 16px;
-    margin-top: 10px;
+.ContainerForPagesAndEditor{
+    background-color: rgb(91, 92, 92);
+    width: 90vmax;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    overflow-y: scroll;
 }
+
+/*/Richtexteditoreditor лежит в jss*/
 
 .RichEditoreditor .publicDraftEditorPlaceholderroot,
 .RichEditoreditor .publicDraftEditorcontent {

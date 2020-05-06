@@ -17,6 +17,61 @@ export function ChangePage(curLocation) {
         payload: curLocation
     };
 }
+export function DraftAddPageIMITATION() {
+    return  {
+        type: types.DRAFT_ADD_PAGE_IMITATION,
+    };
+}
+export function DraftRemovePageIMITATION() {
+    return  {
+        type: types.DRAFT_REMOVE_PAGE_IMITATION,
+    };
+}
+export function DraftChangePaperType(newPaperType) {
+    return  {
+        type: types.DRAFT_CHANGE_PAPER_TYPE,
+        payload:newPaperType,
+    };
+}
+export function DraftChangeMonitorPaperSize(newPaperMonitorSize) {
+    return  {
+        type: types.DRAFT_CHANGE_MONITOR_PAPER_SIZE,
+        payload:newPaperMonitorSize,
+    };
+}
+export function DraftChangeFontBasicUnitInVmax(newFontBasicUnitInVmax) {
+    return  {
+        type: types.DRAFT_CHANGE_FONT_BASIC_UNIT_IN_VMAX,
+        payload:newFontBasicUnitInVmax,
+    };
+}
+
+
+/*export function DraftChangeMonitorPaperSize(payload) {
+    return  {
+        type: types.DRAFT_CHANGE_PAPER_TYPE,
+        payload:payload,
+    };
+}*/
+export function DraftChangeBottomLinePaper(newBottomLine) {
+    return  {
+        type: types.DRAFT_CHANGE_BOTTOM_LINE_PAPER,
+        payload:newBottomLine,
+    };
+}
+export function DraftNeedScrollToCurrentCaretPosition() {
+    return  {
+        type: types.DRAFT_NEED_SCROLL_TO_CURRENT_CARET_POSITION,
+    };
+}
+
+export function DraftNeedCheckPageImitation() {
+    return  {
+        type: types.DRAFT_NEED_CHECK_PAGE_IMITATION,
+    };
+}
+
+
 export function exampleAsyncAction() {
     return async (dispatch,getState)=>{
 

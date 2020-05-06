@@ -3,13 +3,21 @@ import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import { ThemeProvider } from '@material-ui/core/styles';
-import './../styles/CommonStyles/commonstyles.css'
-import {StandardThemeDropMenu} from "../styles/CommonComponentsStyles/CustomGlobalThemesMUI";
-import {ConstructorDropMenuStyle, StandardConstrMenuStyle} from "../styles/CommonComponentsStyles/CustomStylesMUIwithStyles";
-import {DraftMainContext} from "./Contexts";
-import {FontsListMenuItems} from "./MenuItemsListsCollection/FontsListMenuItems";
-import {ColorPickerListMenuItems} from "./MenuItemsListsCollection/ColorPickerListMenuItems";
-import {FontSizesListMenuItems} from "./MenuItemsListsCollection/FontSizesListMenuItems";
+import '../../styles/CommonStyles/commonstyles.css'
+import {StandardThemeDropMenu} from "../../styles/CommonComponentsStyles/CustomGlobalThemesMUI";
+import {ConstructorDropMenuStyle, StandardConstrMenuStyle} from "../../styles/CommonComponentsStyles/CustomStylesMUIwithStyles";
+import {DraftMainContext} from "./../Service&SAGA/Contexts";
+import {FontsListMenuItems} from "./../MenuItemsListsCollection/FontsListMenuItems";
+import {ColorPickerListMenuItems} from "./../MenuItemsListsCollection/ColorPickerListMenuItems";
+import {FontSizesListMenuItems} from "./../MenuItemsListsCollection/FontSizesListMenuItems";
+import {ColorFillPicker} from "./../MenuItemsListsCollection/ColorFillPickerListMenuItems";
+import {
+    COLOR_BG_FILL_PICKER,
+    COLOR_PICKER, FIELDS_PROPS,
+    FONT_FAMILY_PICKER,
+    FONT_SIZE_PICKER
+} from "../../styles/ConstructorStyles/DraftStyles/NAMING_CONSTANTS";
+import {FieldsPropsBlock} from "./../PropsBlocks/FieldsPropsBlock";
 
 const StyledMenu = withStyles(ConstructorDropMenuStyle)((props) => (
     <ThemeProvider theme={StandardThemeDropMenu}>
@@ -46,10 +54,11 @@ export default React.memo(function CustomizedMenus(props) {
     };
     let ListMenu;
     switch (menuType) {
-        case 'FONT_FAMILY_PICKER': ListMenu=FontsListMenuItems; break;
-        case 'COLOR_PICKER': ListMenu=ColorPickerListMenuItems; break;
-        case 'FONT_SIZE_PICKER': ListMenu=FontSizesListMenuItems; break;
-        case 'COLOR_BG_FILL_PICKER': ListMenu=undefined; break;
+        case FONT_FAMILY_PICKER: ListMenu=FontsListMenuItems; break;
+        case COLOR_PICKER: ListMenu=ColorPickerListMenuItems; break;
+        case FONT_SIZE_PICKER: ListMenu=FontSizesListMenuItems; break;
+        case COLOR_BG_FILL_PICKER: ListMenu=ColorFillPicker; break;
+        case FIELDS_PROPS: ListMenu=FieldsPropsBlock; break;
     }
     return (
         <div>

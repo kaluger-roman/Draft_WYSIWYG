@@ -1,15 +1,25 @@
 import './FONT_FACES.css'
 import {FONT_FAMILIES_STYLES} from './FONT_FAMILIES_STYLES'
 import {FONT_SIZE_STYLES} from "./FONT_SIZE_STYLES";
-export const inlineStyleMap = {
-    CODE: {
+export let inlineStyleMap = {
+   /* CODE: {
         backgroundColor: 'rgba(0, 0, 0, 0.05)',
         fontFamily: '"ANTQ", "Inconsolata", "Menlo", "Consolas", monospace',
         fontSize: 16,
         padding: 2,
-    },
+    },*/
     TestColor: {
         color: '#FF4422'
+    },
+    LOWERCASE :{
+        textTransform: 'lowercase'
+    },
+    UPPERCASE :{
+        textTransform: 'uppercase'
+    }
+    ,
+    CAPITALIZE:{
+        textTransform: 'capitalize'
     },
     ...FONT_FAMILIES_STYLES,
     ...FONT_SIZE_STYLES,

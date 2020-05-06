@@ -4,6 +4,7 @@ import {rootReducer} from "./Reducers/rootReducer";
 import thunk from "redux-thunk";
 import {ExampleMiddleware} from "./MIDDLEWARES/ExampleMiddleware";
 import {sagaWatcher} from "./SAGA/sagas";
+import {sagaWatcherDraft} from "../components/CommonComps/Service&SAGA/DRAFT_MAIN_SAGA_WATCHER";
 
 const  saga=CreateSagaMiddleware();
 
@@ -16,7 +17,8 @@ export const store=createStore(rootReducer, compose(
         ExampleMiddleware,
         saga,
     ),
-    //devTools
+    devTools
 ));
 
 saga.run(sagaWatcher);
+saga.run(sagaWatcherDraft);

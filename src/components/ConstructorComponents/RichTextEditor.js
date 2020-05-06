@@ -3,9 +3,26 @@ import React, {useMemo, useRef} from "react";
 import {Editor, EditorState, RichUtils, getDefaultKeyBinding, CompositeDecorator, DefaultDraftBlockRenderMap} from 'draft-js';
 import * as Immutable from 'immutable'
 import {inlineStyleMap} from "../styles/ConstructorStyles/DraftStyles/INLINE_DRAFT_STYLES_JS";
-import DropMenuMaterialUi from "../CommonComps/DropMenuMaterialUi";
-import {DraftMainContext} from "../CommonComps/Contexts";
+import DropMenuMaterialUi from "../CommonComps/AuxiliaryComps/DropMenuMaterialUi";
+import {DraftMainContext} from "../CommonComps/Service&SAGA/Contexts";
 import {ItalicBoldStylesFont} from "../CommonComps/MenuItemsListsCollection/ItalicBoldStylesFont";
+import {
+    COLOR_BG_FILL_PICKER,
+    COLOR_PICKER, FIELDS_PROPS,
+    FONT_FAMILY_PICKER,
+    FONT_SIZE_PICKER
+} from "../styles/ConstructorStyles/DraftStyles/NAMING_CONSTANTS";
+import Paper from "@material-ui/core/Paper";
+import {SaveToPcButton} from "../CommonComps/AuxiliaryComps/SaveToPC_BTN";
+import './../styles/ConstructorStyles/GlobalDraftStyles.css'
+import {
+    DraftAddPageIMITATION, DraftChangeMonitorPaperSize,
+    DraftChangePaperType,
+    DraftRemovePageIMITATION,
+} from "../../redux/actions";
+import * as $ from 'jquery';
+import {connect} from "react-redux";
+import DraftEditorContainer from "../CommonComps/DraftEditorContainer";
 
 export class RichTextEditor extends React.Component {
     constructor(props) {
@@ -20,8 +37,9 @@ export class RichTextEditor extends React.Component {
             ])),
             showURLInput: false,
             urlValue: '',
-          /*  EditorReadOnly: false,*/
+            EditorReadOnly: false,
         };
+
 
 
         this.handleKeyCommand = this._handleKeyCommand.bind(this);
@@ -30,7 +48,9 @@ export class RichTextEditor extends React.Component {
         this.toggleInlineStyle = this._toggleInlineStyle.bind(this);
 
 
-        this.onChange = editorState => this.setState({editorState});
+        this.onChange = editorState =>{
+            this.setState({editorState});
+        };
         this.handleKeyCommand = this.handleKeyCommand.bind(this);
         //////////////////////
 
@@ -195,7 +215,7 @@ export class RichTextEditor extends React.Component {
 
 
     async _toggleInlineStyle(inlineStyle, styleSuffiksToReplace, statebefore) { //styleSuffiksToReplace -суффикс стиля, если есть то должен заменить стиль с тем же суффиксом, например, для шрифтов, заменить старый, а не тыкнуть поверх
-        if (styleSuffiksToReplace){
+        if (styleSuffiksToReplace){//inlineStyle может быть массивом стилей, которые надо затоглить
             const currentStyle = statebefore.getCurrentInlineStyle();//вообще говоря возвращает набор стилей для самого левого края выделения
             let regexp = new RegExp(styleSuffiksToReplace);
             const DuplicateStyle=Array.from(currentStyle.values()).find(
@@ -207,7 +227,12 @@ export class RichTextEditor extends React.Component {
                 statebefore=RichUtils.toggleInlineStyle(statebefore, DuplicateStyle)
             }
         }
-        statebefore= RichUtils.toggleInlineStyle(statebefore, inlineStyle);
+        if (Array.isArray(inlineStyle)){
+            inlineStyle.forEach((val)=>{statebefore = RichUtils.toggleInlineStyle(statebefore, val)})
+        }
+        else {
+            statebefore = RichUtils.toggleInlineStyle(statebefore, inlineStyle);
+        }
         return statebefore;
     }
 
@@ -229,8 +254,6 @@ export class RichTextEditor extends React.Component {
         setTimeout(() => this.setState({EditorReadOnly: readonly}), 0)
     }*/
     componentDidMount() {
-
-
     }
     render() {
         const {editorState} = this.state;
@@ -268,29 +291,18 @@ export class RichTextEditor extends React.Component {
                     removeLink={this.removeLink}
                 />
                 {urlInput}
-                <div className={`${St.RichEditoreditor}`} onClick={this.focus}>
-                    <Editor
-                        textAlignment='left'
-                        blockStyleFn={blockStyleFn}
-                        customStyleMap={inlineStyleMap}
-                        editorState={editorState}
-                        handleKeyCommand={this.handleKeyCommand}
-                        keyBindingFn={this.mapKeyToEditorCommand}
-                        onChange={this.onChange}
-                        spellCheck={true}
-                        readOnly={this.state.EditorReadOnly}
-                        blockRendererFn={this.blockRendererFn}
-                        /*blockRenderMap={
-                            DefaultDraftBlockRenderMap.merge(
-                                Immutable.Map({
-                                    'exampleblocktype': { //atomic чтобы onbackspace удалял все сразу , надо иметь такой тип атомик всегда и на основе допустим энтити внутри рисовать все
-                                        element: 'H1',  //ВМЕСТО БЛОКА  С ТИПО ЭКЗАМПЛ ТАЙП КАКИМ БЫ ОН НЕ БЫЛ ТЭГОМ ХТМЛ РИСУЕТ ЭЛЕМЕНТ, СОХРАНЯЯ ВНУТРЕННОСТИ, ПОВЕРХ МОЖНО СВОЙ РАКТ ЭЛЕМЕНТ ВОКРУГ ЕЩЕ
-                                        wrapper: <Examplewrappercomp/>
-                                    },
-                                })
-                            )}*/
-                    />
-                </div>
+               <DraftEditorContainer
+                   textAlignment='left'
+                   blockStyleFn={blockStyleFn}
+                   customStyleMap={inlineStyleMap}
+                   editorState={editorState}
+                   handleKeyCommand={this.handleKeyCommand}
+                   keyBindingFn={this.mapKeyToEditorCommand}
+                   onChange={this.onChange}
+                   spellCheck={true}
+                   readOnly={this.state.EditorReadOnly}
+                   blockRendererFn={this.blockRendererFn}
+               />
             </div>
             </DraftMainContext.Provider>
         );
@@ -305,6 +317,7 @@ function blockStyleFn(block) {
             return null;
     }
 }
+
 
 class StyleButton extends React.Component {
     constructor(props) {
@@ -391,23 +404,30 @@ const InlineStyleControls = React.memo((props) => {
 
            < DropMenuMaterialUi onToggle={props.onToggle}
                                 currentStyle={currentStyle}
-                                menuType='FONT_FAMILY_PICKER'
+                                menuType={FONT_FAMILY_PICKER}
            />
             < DropMenuMaterialUi onToggle={props.onToggle}
                                  currentStyle={currentStyle}
-                                 menuType='COLOR_PICKER'
+                                 menuType={COLOR_PICKER}
             />
             < DropMenuMaterialUi onToggle={props.onToggle}
                                  currentStyle={currentStyle}
-                                 menuType='FONT_SIZE_PICKER'
+                                 menuType={FONT_SIZE_PICKER}
             />
             < DropMenuMaterialUi onToggle={props.onToggle}
                                  currentStyle={currentStyle}
-                                 menuType='COLOR_BG_FILL_PICKER'
+                                 menuType={COLOR_BG_FILL_PICKER}
+            />
+            < DropMenuMaterialUi onToggle={props.onToggle}
+                                 currentStyle={currentStyle}
+                                 menuType={FIELDS_PROPS}
             />
             <ItalicBoldStylesFont
                 onToggle={props.onToggle}
                 currentStyle={currentStyle}
+            />
+            <SaveToPcButton
+                editorState={props.editorState}
             />
             {INLINE_STYLES.map((type) =>
                 <StyleButton

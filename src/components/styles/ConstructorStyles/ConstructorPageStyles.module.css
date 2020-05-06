@@ -1,6 +1,6 @@
 .ConstructorPage{
-    height:100vmin;
-    width: 100%;
-    padding: 15vmin;
-
+    height:250vmin;
+    width: 100vmax;
+    display: flex;
+    justify-content: center;
 }

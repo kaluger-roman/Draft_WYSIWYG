@@ -8,14 +8,20 @@ import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import {DraftMainContext} from "../Contexts";
+import FormatSizeRoundedIcon from '@material-ui/icons/FormatSizeRounded';
+import ArrowUpwardRoundedIcon from '@material-ui/icons/ArrowUpwardRounded';
+import ArrowDownwardRoundedIcon from '@material-ui/icons/ArrowDownwardRounded';
+
+
+
+import {DraftMainContext} from "../Service&SAGA/Contexts";
 
 const useStyles = makeStyles((theme) => ({
     paper: {
         display: 'flex',
         border: `1px solid ${theme.palette.divider}`,
         flexWrap: 'wrap',
-        width: '20vmax'
+        width: '40vmax'
     },
     divider: {
         alignSelf: 'stretch',
@@ -40,19 +46,31 @@ const StyledToggleButtonGroup = withStyles((theme) => ({
 
 export const  ItalicBoldStylesFont=React.memo((props)=> {
     const [formats, setFormats] = React.useState(() => []);
+    const [onlyPossibleFormat, setOnlyPossibleFormat] =React.useState(null);
     let {onToggle, currentStyle}=props;
     let { saveSelectionStateActionWrapper}=useContext(DraftMainContext);
+
     let allFormatsList=["BOLD","ITALIC","UNDERLINE","CODE"];
+    let exclusiveFormatList=['LOWERCASE','UPPERCASE','CAPITALIZE'];
+
     let currentFontStylesOutside=allFormatsList.filter((val)=>currentStyle.has(val));
+    let currentExclusiveFontStylesOutside=exclusiveFormatList.find((val)=>currentStyle.has(val));
 
     if (JSON.stringify(currentFontStylesOutside)!==JSON.stringify(formats)) {
         setFormats(currentFontStylesOutside);
     }
-
+    if(onlyPossibleFormat!==currentExclusiveFontStylesOutside){
+        console.log(currentExclusiveFontStylesOutside);
+        setOnlyPossibleFormat(currentExclusiveFontStylesOutside)
+    }
 
     const handleFormat = (event, newFormats) => {
         let formatToToggle=formats.length>newFormats.length?formats.find((val)=>!newFormats.includes(val)):newFormats.find((val)=>!formats.includes(val));
         saveSelectionStateActionWrapper(onToggle)(null,formatToToggle,null)
+    };
+
+    const handleOnlyPossibleFormat = (event, newFormat) => {
+        saveSelectionStateActionWrapper(onToggle)(null,[onlyPossibleFormat,newFormat],null);
     };
 
     const classes = useStyles();
@@ -78,6 +96,24 @@ export const  ItalicBoldStylesFont=React.memo((props)=> {
                     </ToggleButton>
                     <ToggleButton  onMouseDown={(e)=>e.preventDefault()}   onFocus={(e)=>{e.currentTarget.blur()}} value="CODE" aria-label="CODE">
                         <CodeRoundedIcon/>
+                    </ToggleButton>
+                </StyledToggleButtonGroup>
+                <Divider orientation="vertical" className={classes.divider} />
+                <StyledToggleButtonGroup
+                    size="small"
+                    value={onlyPossibleFormat}
+                    exclusive
+                    onChange={(event, newFormat)=>handleOnlyPossibleFormat(event, newFormat)}
+                    aria-label="text formatting exlusive"
+                >
+                    <ToggleButton  onMouseDown={(e)=>e.preventDefault()}   onFocus={(e)=>{e.currentTarget.blur()}} value="LOWERCASE" aria-label="LOWERCASE">
+                        <ArrowDownwardRoundedIcon/>
+                    </ToggleButton>
+                    <ToggleButton  onMouseDown={(e)=>e.preventDefault()}   onFocus={(e)=>{e.currentTarget.blur()}} value="UPPERCASE" aria-label="UPPERCASE">
+                        <ArrowUpwardRoundedIcon/>
+                    </ToggleButton>
+                    <ToggleButton  onMouseDown={(e)=>e.preventDefault()}   onFocus={(e)=>{e.currentTarget.blur()}} value="CAPITALIZE" aria-label="CAPITALIZE">
+                        <FormatSizeRoundedIcon/>
                     </ToggleButton>
                 </StyledToggleButtonGroup>
                 <Divider orientation="vertical" className={classes.divider} />

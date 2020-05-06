@@ -1,5 +1,5 @@
 import React, {useCallback, useContext, useMemo} from "react";
-import {DraftMainContext} from "../Contexts";
+import {DraftMainContext} from "../Service&SAGA/Contexts";
 import {FONT_SIZE_STYLES} from "../../styles/ConstructorStyles/DraftStyles/FONT_SIZE_STYLES";
 import {withStyles} from "@material-ui/core";
 import ListItemText from "@material-ui/core/ListItemText/ListItemText";
@@ -14,7 +14,8 @@ import TextField from "@material-ui/core/TextField";
 import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
 import CancelTwoToneIcon from '@material-ui/icons/CancelTwoTone';
 import {inlineStyleMap} from "../../styles/ConstructorStyles/DraftStyles/INLINE_DRAFT_STYLES_JS";
-import {AlertDialogSlide} from "../AlertDialog";
+import {AlertDialogSlide} from "../AuxiliaryComps/AlertDialog";
+import {useSelector} from "react-redux";
 
 
 
@@ -24,7 +25,7 @@ export const FontSizesListMenuItems = React.memo((props) => {
     let [selectedFontSize, setSelectedFontSIze] = React.useState(null);
     let [isAlertShown, setIsAlertShown] = React.useState(false);
     let [isInputFocused, setIsInputFocused] = React.useState(false);
-
+    //const basicUnitOfFontSizeInVmax=useSelector((state)=>state.Draft.UnitOfFontSizeInVmax);
 
     const handleAlertOpen = () => {
         setIsAlertShown(true);
@@ -37,10 +38,10 @@ export const FontSizesListMenuItems = React.memo((props) => {
         let input=document.getElementById('FONT_SIZE_TEXT_FIELD_INPUT_CONSTRUCTOR');
         input.blur();
         if(!isNaN(+(input.value)) && input.value>1 && input.value<100){
-            let styleName='FONT_SIZE_'+(+(input.value)).toFixed(2);
+            let styleName=REGEXP_FONT_SIZE_SUFFIKS.slice(1)+(+(input.value)).toFixed(2);
             if (!inlineStyleMap.hasOwnProperty(styleName)){
                 inlineStyleMap[styleName]={
-                    fontSize:`${ (+(input.value)).toFixed(2)}px`,
+                    fontSize:`${ (+(input.value)).toFixed(1)*basicUnitOfFontSizeInVmax}vmax`,
                 }
             }
             saveSelectionStateActionWrapper(onToggle)(null, styleName, REGEXP_FONT_SIZE_SUFFIKS);
@@ -48,7 +49,7 @@ export const FontSizesListMenuItems = React.memo((props) => {
         else{
             handleAlertOpen();
         }
-    },[]);
+    },[/*basicUnitOfFontSizeInVmax*/]);
 
     let regexp = new RegExp(REGEXP_FONT_SIZE_SUFFIKS);
     let newFontSize=currentStyle.toArray().find((value=>regexp.test(value)));
@@ -74,7 +75,7 @@ export const FontSizesListMenuItems = React.memo((props) => {
             )
         }
         return localret;
-    },[selectedFontSize]);
+    },[selectedFontSize/*,basicUnitOfFontSizeInVmax*/]);
     let inputSize=useMemo(()=>{
         const useStyles = {
             root: {
@@ -109,7 +110,7 @@ export const FontSizesListMenuItems = React.memo((props) => {
             </form>
         )
 
-    },[selectedFontSize, isInputFocused]);
+    },[selectedFontSize, isInputFocused,handleConfirmUserInput/*,basicUnitOfFontSizeInVmax*/]);
 
 
     if ((newFontSize!==selectedFontSize)&&(shouldMenuSelectedItemUpdate)) {
