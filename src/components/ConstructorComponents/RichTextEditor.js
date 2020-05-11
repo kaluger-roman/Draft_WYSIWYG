@@ -1,6 +1,12 @@
 import * as St from './../styles/ConstructorStyles/RichTextEditorStyle.module.css';
 import React, {useMemo, useRef} from "react";
-import {Editor, EditorState, RichUtils, getDefaultKeyBinding, CompositeDecorator, DefaultDraftBlockRenderMap} from 'draft-js';
+import {
+    EditorState,
+    RichUtils,
+    getDefaultKeyBinding,
+    CompositeDecorator,
+    DefaultDraftBlockRenderMap, CharacterMetadata,
+} from 'draft-js';
 import * as Immutable from 'immutable'
 import {inlineStyleMap} from "../styles/ConstructorStyles/DraftStyles/INLINE_DRAFT_STYLES_JS";
 import DropMenuMaterialUi from "../CommonComps/AuxiliaryComps/DropMenuMaterialUi";
@@ -10,19 +16,15 @@ import {
     COLOR_BG_FILL_PICKER,
     COLOR_PICKER, FIELDS_PROPS,
     FONT_FAMILY_PICKER,
-    FONT_SIZE_PICKER
+    FONT_SIZE_PICKER, PAPER_TYPES
 } from "../styles/ConstructorStyles/DraftStyles/NAMING_CONSTANTS";
 import Paper from "@material-ui/core/Paper";
 import {SaveToPcButton} from "../CommonComps/AuxiliaryComps/SaveToPC_BTN";
 import './../styles/ConstructorStyles/GlobalDraftStyles.css'
-import {
-    DraftAddPageIMITATION, DraftChangeMonitorPaperSize,
-    DraftChangePaperType,
-    DraftRemovePageIMITATION,
-} from "../../redux/actions";
-import * as $ from 'jquery';
+
 import {connect} from "react-redux";
 import DraftEditorContainer from "../CommonComps/DraftEditorContainer";
+import {ClearInlineStylesOfSuffiksEachCharacter} from "../CommonComps/Service&SAGA/DraftUtils/ClearInlineStylesOfSuffiksEachCharacter";
 
 export class RichTextEditor extends React.Component {
     constructor(props) {
@@ -191,15 +193,15 @@ export class RichTextEditor extends React.Component {
             return;
         }
 
-        /*if (e.keyCode === 8 /!* backspace *!/) {//гадость делает ошибку при удалении в начале пустого документа
+        if (e.keyCode === 8 /* backspace */) {//гадость делает ошибку при удалении в начале пустого документа
             const newEditorState = RichUtils.onBackspace(
                 this.state.editorState,
             );
-            if (newEditorState !== this.state.editorState) {
+            if (newEditorState && newEditorState !== this.state.editorState) {
                this.onChange(newEditorState);
             }
-            return;
-        }*/
+            /*return*/ //делает ошибка
+        }
 
         return getDefaultKeyBinding(e);
     }
@@ -215,26 +217,36 @@ export class RichTextEditor extends React.Component {
 
 
     async _toggleInlineStyle(inlineStyle, styleSuffiksToReplace, statebefore) { //styleSuffiksToReplace -суффикс стиля, если есть то должен заменить стиль с тем же суффиксом, например, для шрифтов, заменить старый, а не тыкнуть поверх
-        if (styleSuffiksToReplace){//inlineStyle может быть массивом стилей, которые надо затоглить
-            const currentStyle = statebefore.getCurrentInlineStyle();//вообще говоря возвращает набор стилей для самого левого края выделения
-            let regexp = new RegExp(styleSuffiksToReplace);
-            const DuplicateStyle=Array.from(currentStyle.values()).find(
-                (value => {
-                    if (regexp.test(value))
-                        return true;
-                }));
-            if (DuplicateStyle) {
-                statebefore=RichUtils.toggleInlineStyle(statebefore, DuplicateStyle)
+
+        if (styleSuffiksToReplace) {//inlineStyle может быть массивом стилей, которые надо затоглить
+            const curContentState = statebefore.getCurrentContent();
+            const curSelectionState = statebefore.getSelection();
+            if (!curSelectionState.isCollapsed()) {
+                const newContentState = ClearInlineStylesOfSuffiksEachCharacter(curContentState, curSelectionState, styleSuffiksToReplace);
+                statebefore = EditorState.push(statebefore, newContentState, 'change-inline-style');
             }
+
+            else{
+                let DuplicateStyle=statebefore.getCurrentInlineStyle().toArray().find((value => (new RegExp(styleSuffiksToReplace)).test(value)));
+                if (DuplicateStyle) {
+                    statebefore = RichUtils.toggleInlineStyle(statebefore, DuplicateStyle);
+                }
+            }
+
         }
-        if (Array.isArray(inlineStyle)){
-            inlineStyle.forEach((val)=>{statebefore = RichUtils.toggleInlineStyle(statebefore, val)})
-        }
-        else {
+
+        if (Array.isArray(inlineStyle)) {
+            inlineStyle.forEach((val) => {
+                statebefore = RichUtils.toggleInlineStyle(statebefore, val)
+            })
+        } else {
             statebefore = RichUtils.toggleInlineStyle(statebefore, inlineStyle);
         }
+
         return statebefore;
     }
+
+
 
      blockRendererFn(contentBlock) {
 
@@ -421,6 +433,10 @@ const InlineStyleControls = React.memo((props) => {
             < DropMenuMaterialUi onToggle={props.onToggle}
                                  currentStyle={currentStyle}
                                  menuType={FIELDS_PROPS}
+            />
+            < DropMenuMaterialUi onToggle={props.onToggle}
+                                 currentStyle={currentStyle}
+                                 menuType={PAPER_TYPES}
             />
             <ItalicBoldStylesFont
                 onToggle={props.onToggle}

@@ -71,6 +71,20 @@ export function DraftNeedCheckPageImitation() {
     };
 }
 
+export function DraftNeedChangePageFields(newFieldsInSm) {
+    return  {
+        type: types.DRAFT_NEED_CHANGE_PAGE_FIELDS,
+        payload:newFieldsInSm,
+    };
+}
+
+export function DraftSetPageFieldsToStore(newFieldsInVW) {
+    return  {
+        type: types.DRAFT_SET_PAGE_FIELDS_TO_STORE,
+        payload:newFieldsInVW,
+    };
+}
+
 
 export function exampleAsyncAction() {
     return async (dispatch,getState)=>{

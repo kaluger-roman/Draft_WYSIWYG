@@ -6,7 +6,7 @@ export const RichEditoreditor_JSS_STYLE ={
     fontSize: '16px',
     marginTop:'10px',
     height: '100%',
-    width: '80vmax',
+    width: '80vw',
     position: 'relative',
     zIndex: '0',
 };

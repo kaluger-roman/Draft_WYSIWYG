@@ -25,7 +25,7 @@ export const FontSizesListMenuItems = React.memo((props) => {
     let [selectedFontSize, setSelectedFontSIze] = React.useState(null);
     let [isAlertShown, setIsAlertShown] = React.useState(false);
     let [isInputFocused, setIsInputFocused] = React.useState(false);
-    //const basicUnitOfFontSizeInVmax=useSelector((state)=>state.Draft.UnitOfFontSizeInVmax);
+    const basicUnitOfFontSizeInVmax=useSelector((state)=>state.Draft.UnitOfFontSizeInVmax);
 
     const handleAlertOpen = () => {
         setIsAlertShown(true);
@@ -49,7 +49,7 @@ export const FontSizesListMenuItems = React.memo((props) => {
         else{
             handleAlertOpen();
         }
-    },[/*basicUnitOfFontSizeInVmax*/]);
+    },[basicUnitOfFontSizeInVmax]);
 
     let regexp = new RegExp(REGEXP_FONT_SIZE_SUFFIKS);
     let newFontSize=currentStyle.toArray().find((value=>regexp.test(value)));
@@ -118,7 +118,6 @@ export const FontSizesListMenuItems = React.memo((props) => {
     }
     return (
         <React.Fragment>
-            <AlertDialogSlide/>
             {inputSize}
             {ret}
             <AlertDialogSlide headermessage={'Некорректный ввод'}

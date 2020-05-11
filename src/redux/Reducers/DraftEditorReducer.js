@@ -18,10 +18,12 @@ const InitialState={
         width: initialWidthInVmax,
         height:initialHeightInVmax,
     },
+    orientation:'vertical',//  /horizontal
+    pageFields:{topField:0, bottomField:0, leftField:0, rightField:0},
     basicWidthOfViewInVmax:initialWidthInVmax, //менять только в коде, начальная величина от чего отталкиваются все размеры, берется непосредственно из начального css, тут для удобства, если надо менять в когде то только с помощью масштаба
     ScaleOfView:initialScaleOfView,
-    bottomLinePaper:initialHeightInVmax*document.documentElement.offsetWidth/100,
-    UnitOfFontSizeInVmax:initialUnitOfFontSizeInVmax,
+    bottomLinePaper:initialHeightInVmax,//в vmax
+    UnitOfFontSizeInVmax:initialUnitOfFontSizeInVmax,//при смене полей урезается страница, экранный пункт шрифта не менять,менять при смене типа страницы
     //SpaceBetweenPages:1//в vmax
 };
 export const  DraftEditorReducer=(state=InitialState, action)=>{
@@ -32,6 +34,9 @@ export const  DraftEditorReducer=(state=InitialState, action)=>{
         case types.DRAFT_CHANGE_FONT_BASIC_UNIT_IN_VMAX: return {...state, UnitOfFontSizeInVmax: action.payload};
         case types.DRAFT_CHANGE_MONITOR_PAPER_SIZE: return {...state, monitorPaperSize: action.payload};
         case types.DRAFT_CHANGE_BOTTOM_LINE_PAPER: return {...state, bottomLinePaper: action.payload};
+        case types.DRAFT_SET_PAGE_FIELDS_TO_STORE: return {...state, pageFields: action.payload};
+
+
 
         default: return state
     }

@@ -1,6 +1,12 @@
 import './FONT_FACES.css'
 import {FONT_FAMILIES_STYLES} from './FONT_FAMILIES_STYLES'
 import {FONT_SIZE_STYLES} from "./FONT_SIZE_STYLES";
+export function getInlineStyleMap() {
+    return inlineStyleMap;
+}
+export function setInlineStyleMap(newMap) {
+    inlineStyleMap=newMap;
+}
 export let inlineStyleMap = {
    /* CODE: {
         backgroundColor: 'rgba(0, 0, 0, 0.05)',
