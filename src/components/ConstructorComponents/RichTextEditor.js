@@ -16,7 +16,7 @@ import {
     COLOR_BG_FILL_PICKER,
     COLOR_PICKER, FIELDS_PROPS,
     FONT_FAMILY_PICKER,
-    FONT_SIZE_PICKER, PAPER_TYPES
+    FONT_SIZE_PICKER, PAPER_ORIENTATION, PAPER_TYPES, TABLE_ENTITY_TYPE
 } from "../styles/ConstructorStyles/DraftStyles/NAMING_CONSTANTS";
 import Paper from "@material-ui/core/Paper";
 import {SaveToPcButton} from "../CommonComps/AuxiliaryComps/SaveToPC_BTN";
@@ -25,6 +25,10 @@ import './../styles/ConstructorStyles/GlobalDraftStyles.css'
 import {connect} from "react-redux";
 import DraftEditorContainer from "../CommonComps/DraftEditorContainer";
 import {ClearInlineStylesOfSuffiksEachCharacter} from "../CommonComps/Service&SAGA/DraftUtils/ClearInlineStylesOfSuffiksEachCharacter";
+import {ScalePropsBlock} from "../CommonComps/AuxiliaryComps/ScalePropsBlock";
+import {StatsInfoBlock} from "../CommonComps/AuxiliaryComps/StatsInfoBlock";
+import {TableManageBlock} from "../CommonComps/PropsBlocks/TableManageBlock";
+import {TableEmbedElement} from "../CommonComps/EmbedElements/TableEmbedElement";
 
 export class RichTextEditor extends React.Component {
     constructor(props) {
@@ -63,12 +67,10 @@ export class RichTextEditor extends React.Component {
         this.onLinkInputKeyDown = this._onLinkInputKeyDown.bind(this);
         this.removeLink = this._removeLink.bind(this);
         this.blockRendererFn = this.blockRendererFn.bind(this);
-        this.blockRendererFn = this.blockRendererFn.bind(this);
         this.saveSelectionStateActionWrapper=this._saveSelectionStateActionWrapper.bind(this);
 
-        /*
-                this.toggleEditorReadOnly = this.toggleEditorReadOnly.bind(this);
-        */
+        this.toggleEditorReadOnly = this.toggleEditorReadOnly.bind(this);
+
 
 
     this.selectionbefore=undefined;
@@ -193,6 +195,7 @@ export class RichTextEditor extends React.Component {
             return;
         }
 
+
         if (e.keyCode === 8 /* backspace */) {//гадость делает ошибку при удалении в начале пустого документа
             const newEditorState = RichUtils.onBackspace(
                 this.state.editorState,
@@ -249,22 +252,28 @@ export class RichTextEditor extends React.Component {
 
 
      blockRendererFn(contentBlock) {
+        const entityKey=contentBlock.getEntityAt(0);
 
+        if (!entityKey)
+            return;
+
+        const entity=this.state.editorState.getCurrentContent().getEntity(entityKey);
+        let entityType=entity.getType();
         const type = contentBlock.getType();
-        if (type === 'exampleblocktype') {
+        if (entityType===TABLE_ENTITY_TYPE) {
             return {
-                component: Examplewrappercomp,          //внутрь вставляется этот элемент, заменяя все внутри, сам элемент внешний принимает параметр эдитэбл
-                editable: true,
+                component: TableEmbedElement,          //внутрь вставляется этот элемент, заменяя все внутри, сам элемент внешний принимает параметр эдитэбл
+                editable: false,//вызывает вопросы, но иначе ошибка из-за отсутствия выделения, возможно не роляет за счет readonly
                 props: {
-                    foo: 'bar',
-                    children: contentBlock.getText()
+                    toggleEditorReadOnly:this.toggleEditorReadOnly,
+                    //children: contentBlock.getText()
                 },
             };
         }
     }
-   /* toggleEditorReadOnly(readonly) {
+    toggleEditorReadOnly(readonly) {
         setTimeout(() => this.setState({EditorReadOnly: readonly}), 0)
-    }*/
+    }
     componentDidMount() {
     }
     render() {
@@ -301,6 +310,7 @@ export class RichTextEditor extends React.Component {
                     onToggle={this.toggleInlineStyle}
                     promptForLink={this.promptForLink}
                     removeLink={this.removeLink}
+                    onChange={this.onChange}
                 />
                 {urlInput}
                <DraftEditorContainer
@@ -323,8 +333,10 @@ export class RichTextEditor extends React.Component {
 
 function blockStyleFn(block) {
     switch (block.getType()) {
-        case 'blockquote':
-            return `${St.RichEditorblockquote}`;
+        /*case 'blockquote':
+            return `${St.RichEditorblockquote}`;*/
+        case 'unstyled':
+            return  `${St.blockStyleFnUnStyledBlockType}`
         default:
             return null;
     }
@@ -401,16 +413,10 @@ const BlockStyleControls = (props) => {
     );
 };
 
-var INLINE_STYLES = [
-    {label: 'Bold', style: 'BOLD'},
-    {label: 'Italic', style: 'ITALIC'},
-    {label: 'Underline', style: 'Adventure_FONT_FAMILY'},
-    {label: 'Monospace', style: 'ANTQ_FONT_FAMILY'},
-    {label: 'TestColor', style: 'TestColor'},
-];
 
 const InlineStyleControls = React.memo((props) => {
    const currentStyle = props.editorState.getCurrentInlineStyle();//вообще говоря возвращает набор стилей для самого левого края выделения
+   const {onChange, editorState}=props;
     return (
         <div className={`${St.RichEditorcontrols}`}>
 
@@ -438,6 +444,10 @@ const InlineStyleControls = React.memo((props) => {
                                  currentStyle={currentStyle}
                                  menuType={PAPER_TYPES}
             />
+            < DropMenuMaterialUi onToggle={props.onToggle}
+                                 currentStyle={currentStyle}
+                                 menuType={PAPER_ORIENTATION}
+            />
             <ItalicBoldStylesFont
                 onToggle={props.onToggle}
                 currentStyle={currentStyle}
@@ -445,15 +455,9 @@ const InlineStyleControls = React.memo((props) => {
             <SaveToPcButton
                 editorState={props.editorState}
             />
-            {INLINE_STYLES.map((type) =>
-                <StyleButton
-                    key={type.label}
-                    active={currentStyle.has(type.style)}
-                    label={type.label}
-                    onToggle={props.onToggle}
-                    type={type.style}
-                />
-            )}
+            <StatsInfoBlock editorState={props.editorState}/>
+            <ScalePropsBlock/>
+            <TableManageBlock editorState={editorState} onChange={onChange}/>
             <button
                 onMouseDown={props.promptForLink}
                 style={{marginRight: 10}}>

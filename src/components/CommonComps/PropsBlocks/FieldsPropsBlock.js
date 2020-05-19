@@ -8,8 +8,10 @@ import NumericInput from 'react-numeric-input';
 
 import {DraftMainContext} from "../Service&SAGA/Contexts";
 import {useDispatch, useSelector} from "react-redux";
-import {DraftNeedChangePageFields} from "../../../redux/actions";
+import {DraftNeedChangePageFields, DraftSetPageFieldsToStore} from "../../../redux/actions";
 import {AlertDialogSlide} from "../AuxiliaryComps/AlertDialog";
+import {convertCMtoPX, convertPXtoCM} from "../Service&SAGA/DRAFT_MAIN_SAGA_WATCHER";
+import * as St from "../../styles/ConstructorStyles/RichTextEditorStyle.module.css";
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -25,9 +27,6 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const StyledNumericInput = withStyles((theme) => ({
-
-}))(NumericInput);
 const StylesForNumericInput={
     wrap: {
         background: '#E2E2E2',
@@ -59,7 +58,7 @@ const StylesForNumericInput={
 };
 
 export const  FieldsPropsBlock=React.memo((props)=> {
-    const [fieldsValues, setFieldsValues] = React.useState({topField:1, bottomField:1, leftField:1, rightField:1});
+    const [fieldsValues, setFieldsValues] = React.useState({topField:0, bottomField:0, leftField:0, rightField:0});
     let { saveSelectionStateActionWrapper}=useContext(DraftMainContext);
     let [isAlertShown, setIsAlertShown] = React.useState(false);
 
@@ -75,6 +74,14 @@ export const  FieldsPropsBlock=React.memo((props)=> {
         setIsAlertShown(false);
     };
 
+    const handleClickOnInput=(e)=>{
+        const editorContainerWithPages=document.querySelector(`.${St.ContainerForPagesAndEditor}`)
+        const editorScrollTopBefore=editorContainerWithPages.scrollTop;
+        e.target.focus();
+        e.target.select()
+        editorContainerWithPages.scrollTop=editorScrollTopBefore;
+    };
+
     function handlerChangeInput(newVal,strval,inputObj){
         if(!(/^[0-9]{0,2}(\.[0-9])+/).test(strval)/*||newVal<0 || newVal>10*/){
             handleAlertOpen();
@@ -83,8 +90,7 @@ export const  FieldsPropsBlock=React.memo((props)=> {
 
         let newState={...fieldsValues,[inputObj.title]:newVal};
         setFieldsValues(newState);
-        console.log(newState)
-        dispatch(DraftNeedChangePageFields(newState))
+        dispatch(DraftSetPageFieldsToStore(newState))
     }
 
     return (
@@ -94,7 +100,7 @@ export const  FieldsPropsBlock=React.memo((props)=> {
                 <div>Верхнее поле</div>
                 <NumericInput
                     title='topField'
-                    onClick={(e)=>e.target.focus()}
+                    onClick={(e)=>handleClickOnInput(e)}
                     onChange={(val,strval,inputObj)=>handlerChangeInput(val,strval,inputObj)}
                     value={fieldsValues.topField}
                     precision={1}
@@ -102,13 +108,13 @@ export const  FieldsPropsBlock=React.memo((props)=> {
                     step={0.1}
                     mobile={false}
                     min={0}
-                    max={10}
+                    max={100}
                     style={StylesForNumericInput}
                   />
                     <div>Нижнее поле</div>
                     <NumericInput
                         title='bottomField'
-                        onClick={(e)=>e.target.focus()}
+                        onClick={(e)=>handleClickOnInput(e)}
                         onChange={(val,strval,inputObj)=>handlerChangeInput(val,strval,inputObj)}
                         value={fieldsValues.bottomField}
                         precision={1}
@@ -116,13 +122,13 @@ export const  FieldsPropsBlock=React.memo((props)=> {
                         step={0.1}
                         mobile={false}
                         min={0}
-                        max={10}
+                        max={100}
                         style={StylesForNumericInput}
                     />
                     <div>Левое поле</div>
                     <NumericInput
                         title='leftField'
-                        onClick={(e)=>e.target.focus()}
+                        onClick={(e)=>handleClickOnInput(e)}
                         onChange={(val,strval,inputObj)=>handlerChangeInput(val,strval,inputObj)}
                         value={fieldsValues.leftField}
                         precision={1}
@@ -130,13 +136,13 @@ export const  FieldsPropsBlock=React.memo((props)=> {
                         step={0.1}
                         mobile={false}
                         min={0}
-                        max={10}
+                        max={100}
                         style={StylesForNumericInput}
                     />
                     <div>Правое поле</div>
                     <NumericInput
                         title='rightField'
-                        onClick={(e)=>e.target.focus()}
+                        onClick={(e)=>handleClickOnInput(e)}
                         onChange={(val,strval,inputObj)=>handlerChangeInput(val,strval,inputObj)}
                         value={fieldsValues.rightField}
                         precision={1}
@@ -144,7 +150,7 @@ export const  FieldsPropsBlock=React.memo((props)=> {
                         step={0.1}
                         mobile={false}
                         min={0}
-                        max={10}
+                        max={100}
                         style={StylesForNumericInput}
                     />
 

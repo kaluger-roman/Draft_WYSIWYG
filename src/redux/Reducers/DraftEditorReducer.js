@@ -1,43 +1,53 @@
-import {A4_Page_PAPER,basicFontSizeUnitInMM} from "../../components/CommonComps/Service&SAGA/PageSizeConstants";
+import {
+    VERTICAL_ORIENTATION_PAGE_CONST,
+    HORIZONTAL_ORIENTATION_PAGE_CONST,
+    LIST_OF_COMMON_PAPER_TYPES,
+    basicFontSizeUnitInMM,
+    UnitOfFontSizePX
+} from "../../components/CommonComps/Service&SAGA/PageSizeConstants";
+import * as $ from "jquery";
+import {convertMMtoPX} from "../../components/CommonComps/Service&SAGA/DRAFT_MAIN_SAGA_WATCHER";
 
-const types= require( "../actiontypes");
-import * as St from "../../components/styles/ConstructorStyles/RichTextEditorStyle.module.css";
+const types = require("../actiontypes");
 
+const initialScaleOfView = 100;//масштаб %
+const initialHeightPX = convertMMtoPX(LIST_OF_COMMON_PAPER_TYPES[0][VERTICAL_ORIENTATION_PAGE_CONST].height);
+const initialWidthPX = initialHeightPX * LIST_OF_COMMON_PAPER_TYPES[0][VERTICAL_ORIENTATION_PAGE_CONST].width / LIST_OF_COMMON_PAPER_TYPES[0][VERTICAL_ORIENTATION_PAGE_CONST].height;
 
-import {RichEditoreditor_JSS_STYLE} from "../../components/styles/ConstructorStyles/RichTextEditorStyle___JSS";
+function Initialize() {//нужно вызвать после перехода в раздел конструктора
+    setTimeout(()=>{
+        $(`.DraftEditor-root`).css({width:`${initialWidthPX}px`/*,visibility:`visible`*/});
+        $(`#RichEditoreditor_`).css({width:`${initialWidthPX}px`, webkitTransformOrigin: '50% 0%', transformOrigin:' 50% 0%'});
 
-const initialScaleOfView=1;//масштаб
-const initialWidthInVmax=initialScaleOfView*parseInt(RichEditoreditor_JSS_STYLE.width);
-const initialHeightInVmax=initialWidthInVmax*A4_Page_PAPER.height/A4_Page_PAPER.width;
-export const initialUnitOfFontSizeInVmax=initialHeightInVmax*basicFontSizeUnitInMM/A4_Page_PAPER.height;
+    },0);
+}
+Initialize();
 
-const InitialState={
+const InitialState = {
     pageImitationsCount: 1,
-    curPagePaperType: A4_Page_PAPER,
-    monitorPaperSize:{
-        width: initialWidthInVmax,
-        height:initialHeightInVmax,
-    },
-    orientation:'vertical',//  /horizontal
-    pageFields:{topField:0, bottomField:0, leftField:0, rightField:0},
-    basicWidthOfViewInVmax:initialWidthInVmax, //менять только в коде, начальная величина от чего отталкиваются все размеры, берется непосредственно из начального css, тут для удобства, если надо менять в когде то только с помощью масштаба
-    ScaleOfView:initialScaleOfView,
-    bottomLinePaper:initialHeightInVmax,//в vmax
-    UnitOfFontSizeInVmax:initialUnitOfFontSizeInVmax,//при смене полей урезается страница, экранный пункт шрифта не менять,менять при смене типа страницы
-    //SpaceBetweenPages:1//в vmax
+    curPagePaperType: LIST_OF_COMMON_PAPER_TYPES[0],//А4
+    orientation: VERTICAL_ORIENTATION_PAGE_CONST,
+    pageFields: {topField: 0, bottomField: 0, leftField: 0, rightField: 0},//в mm
+    ScaleOfView: initialScaleOfView,//применять к эдементу вокруг редактора transform scale()
+    bottomLinePaper: initialHeightPX,//в px
 };
-export const  DraftEditorReducer=(state=InitialState, action)=>{
+export const DraftEditorReducer = (state = InitialState, action) => {
     switch (action.type) {
-        case types.DRAFT_ADD_PAGE_IMITATION: return {...state, pageImitationsCount: state.pageImitationsCount+1};
-        case types.DRAFT_REMOVE_PAGE_IMITATION: return {...state, pageImitationsCount: state.pageImitationsCount-1};
-        case types.DRAFT_CHANGE_PAPER_TYPE: return {...state, curPagePaperType: action.payload};
-        case types.DRAFT_CHANGE_FONT_BASIC_UNIT_IN_VMAX: return {...state, UnitOfFontSizeInVmax: action.payload};
-        case types.DRAFT_CHANGE_MONITOR_PAPER_SIZE: return {...state, monitorPaperSize: action.payload};
-        case types.DRAFT_CHANGE_BOTTOM_LINE_PAPER: return {...state, bottomLinePaper: action.payload};
-        case types.DRAFT_SET_PAGE_FIELDS_TO_STORE: return {...state, pageFields: action.payload};
-
-
-
-        default: return state
+        case types.DRAFT_ADD_PAGE_IMITATION:
+            return {...state, pageImitationsCount: state.pageImitationsCount + 1};
+        case types.DRAFT_REMOVE_PAGE_IMITATION:
+            return {...state, pageImitationsCount: state.pageImitationsCount - 1};
+        case types.DRAFT_CHANGE_PAPER_TYPE:
+            return {...state, curPagePaperType: action.payload};
+        case types.DRAFT_CHANGE_PAPER_ORIENTATION:
+            return {...state, orientation: action.payload};
+        case types.DRAFT_CHANGE_SCALE:
+            return {...state, ScaleOfView: action.payload};
+        case types.DRAFT_CHANGE_BOTTOM_LINE_PAPER:
+            return {...state, bottomLinePaper: action.payload};
+        case types.DRAFT_SET_PAGE_FIELDS_TO_STORE:
+            return {...state, pageFields: action.payload};
+        default:
+            return state
     }
 };

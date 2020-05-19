@@ -16,9 +16,14 @@ import CancelTwoToneIcon from '@material-ui/icons/CancelTwoTone';
 import {inlineStyleMap} from "../../styles/ConstructorStyles/DraftStyles/INLINE_DRAFT_STYLES_JS";
 import {AlertDialogSlide} from "../AuxiliaryComps/AlertDialog";
 import {useDispatch, useSelector} from "react-redux";
-import {Custom_Page_PAPER, LIST_OF_COMMON_PAPER_TYPES} from "../Service&SAGA/PageSizeConstants";
+import {
+    Custom_Page_PAPER, HORIZONTAL_ORIENTATION_PAGE_CONST,
+    LIST_OF_COMMON_PAPER_TYPES,
+    VERTICAL_ORIENTATION_PAGE_CONST
+} from "../Service&SAGA/PageSizeConstants";
 import NumericInput from "react-numeric-input";
 import {DraftChangePaperType} from "../../../redux/actions";
+import * as St from "../../styles/ConstructorStyles/RichTextEditorStyle.module.css";
 
 const StylesForNumericInput={
     wrap: {
@@ -53,9 +58,11 @@ const StylesForNumericInput={
 export const PageTypesPropsBlock = (props) => {
     let { saveSelectionStateActionWrapper}=useContext(DraftMainContext);
     let curPageType = useSelector((state)=>state.Draft.curPagePaperType);
+    let curOrientation = useSelector((state)=>state.Draft.orientation);
     let [isAlertShown, setIsAlertShown] = React.useState(false);
     let [isInputFocused, setIsInputFocused] = React.useState(false);
     let dispatch=useDispatch();
+
     const handleAlertOpen = () => {
         setIsAlertShown(true);
     };
@@ -66,6 +73,14 @@ export const PageTypesPropsBlock = (props) => {
 
     const handleClickChangePaperType=(type)=>{
         dispatch(DraftChangePaperType(type));
+    };
+
+    const handleClickOnInput=(e)=>{
+        const editorContainerWithPages=document.querySelector(`.${St.ContainerForPagesAndEditor}`)
+        const editorScrollTopBefore=editorContainerWithPages.scrollTop;
+        e.target.focus();
+        e.target.select()
+        editorContainerWithPages.scrollTop=editorScrollTopBefore;
     };
 
     let ret = useMemo(()=>{
@@ -109,11 +124,12 @@ export const PageTypesPropsBlock = (props) => {
                 <div> Ширина
                 <NumericInput
                     title='Width'
-                    onClick={(e)=>{e.target.focus()}}
+                    onClick={(e)=>handleClickOnInput(e)}
                     onFocus={()=>setIsInputFocused(true)}
                     onBlur={()=>setIsInputFocused(false)}
-                    onChange={(val)=>{Custom_Page_PAPER.width=val}}
-                    value={curPageType.width}
+                    onChange={(val)=>{Custom_Page_PAPER[VERTICAL_ORIENTATION_PAGE_CONST].width=val;
+                                      Custom_Page_PAPER[HORIZONTAL_ORIENTATION_PAGE_CONST].width=val}}
+                    value={curPageType[curOrientation].width}
                     precision={0}
                     size={6}
                     step={1}
@@ -126,11 +142,12 @@ export const PageTypesPropsBlock = (props) => {
                 <div>Высота
                     <NumericInput
                         title='Height'
-                        onClick={(e)=>{e.target.focus()}}
+                        onClick={(e)=>handleClickOnInput(e)}
                         onFocus={()=>setIsInputFocused(true)}
                         onBlur={()=>setIsInputFocused(false)}
-                        onChange={(val)=>{Custom_Page_PAPER.height=val}}
-                        value={curPageType.height}
+                        onChange={(val)=>{Custom_Page_PAPER[VERTICAL_ORIENTATION_PAGE_CONST].height=val;
+                            Custom_Page_PAPER[HORIZONTAL_ORIENTATION_PAGE_CONST].height=val}}
+                        value={curPageType[curOrientation].height}
                         precision={0}
                         size={6}
                         step={1}

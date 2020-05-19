@@ -17,6 +17,7 @@ export function ChangePage(curLocation) {
         payload: curLocation
     };
 }
+//////////////////////////////////////////////DRAFT/////////////////////////
 export function DraftAddPageIMITATION() {
     return  {
         type: types.DRAFT_ADD_PAGE_IMITATION,
@@ -33,26 +34,22 @@ export function DraftChangePaperType(newPaperType) {
         payload:newPaperType,
     };
 }
-export function DraftChangeMonitorPaperSize(newPaperMonitorSize) {
+
+export function DraftChangePaperOrientation(newPaperOrientation) {
     return  {
-        type: types.DRAFT_CHANGE_MONITOR_PAPER_SIZE,
-        payload:newPaperMonitorSize,
+        type: types.DRAFT_CHANGE_PAPER_ORIENTATION,
+        payload:newPaperOrientation,
     };
 }
-export function DraftChangeFontBasicUnitInVmax(newFontBasicUnitInVmax) {
+
+export function DraftChangeScale(newScale) {
     return  {
-        type: types.DRAFT_CHANGE_FONT_BASIC_UNIT_IN_VMAX,
-        payload:newFontBasicUnitInVmax,
+        type: types.DRAFT_CHANGE_SCALE,
+        payload:newScale,
     };
 }
 
 
-/*export function DraftChangeMonitorPaperSize(payload) {
-    return  {
-        type: types.DRAFT_CHANGE_PAPER_TYPE,
-        payload:payload,
-    };
-}*/
 export function DraftChangeBottomLinePaper(newBottomLine) {
     return  {
         type: types.DRAFT_CHANGE_BOTTOM_LINE_PAPER,
@@ -71,19 +68,18 @@ export function DraftNeedCheckPageImitation() {
     };
 }
 
-export function DraftNeedChangePageFields(newFieldsInSm) {
+export function DraftSetPageFieldsToStore(newFieldsInPX) {
     return  {
-        type: types.DRAFT_NEED_CHANGE_PAGE_FIELDS,
-        payload:newFieldsInSm,
+        type: types.DRAFT_SET_PAGE_FIELDS_TO_STORE,
+        payload:newFieldsInPX,
     };
 }
 
-export function DraftSetPageFieldsToStore(newFieldsInVW) {
-    return  {
-        type: types.DRAFT_SET_PAGE_FIELDS_TO_STORE,
-        payload:newFieldsInVW,
-    };
-}
+
+
+
+
+
 
 
 export function exampleAsyncAction() {

@@ -18,10 +18,11 @@ import {
     COLOR_BG_FILL_PICKER,
     COLOR_PICKER, FIELDS_PROPS,
     FONT_FAMILY_PICKER,
-    FONT_SIZE_PICKER, PAPER_TYPES
+    FONT_SIZE_PICKER, PAPER_ORIENTATION, PAPER_TYPES
 } from "../../styles/ConstructorStyles/DraftStyles/NAMING_CONSTANTS";
 import {FieldsPropsBlock} from "./../PropsBlocks/FieldsPropsBlock";
 import {PageTypesPropsBlock} from "../PropsBlocks/PageTypesPropsBlock";
+import {PageOrientationPropsBlock} from "../PropsBlocks/PageOrientationPropsBlock";
 
 const StyledMenu = withStyles(ConstructorDropMenuStyle)((props) => (
     <ThemeProvider theme={StandardThemeDropMenu}>
@@ -41,6 +42,7 @@ const StyledMenu = withStyles(ConstructorDropMenuStyle)((props) => (
     </ThemeProvider>
 ));
 
+/*
 const StyledMenuWithInputsInside = withStyles(ConstructorDropMenuStyle)((props) => (
     <ThemeProvider theme={NonBlockSelectionThemeDropMenu}>
         <Menu
@@ -58,6 +60,7 @@ const StyledMenuWithInputsInside = withStyles(ConstructorDropMenuStyle)((props) 
         />
     </ThemeProvider>
 ));
+*/
 
 export default React.memo(function CustomizedMenus(props) {
     let {currentStyle, onToggle, menuType}=props;
@@ -80,12 +83,13 @@ export default React.memo(function CustomizedMenus(props) {
         case COLOR_BG_FILL_PICKER: ListMenu=ColorFillPicker; break;
         case FIELDS_PROPS: ListMenu=FieldsPropsBlock; break;
         case PAPER_TYPES: ListMenu=PageTypesPropsBlock; break;
+        case PAPER_ORIENTATION: ListMenu=PageOrientationPropsBlock; break;
     }
 
     let StyledMenuVariant;
     switch (menuType) {
-        case FIELDS_PROPS: StyledMenuVariant=StyledMenuWithInputsInside; break;
-        case PAPER_TYPES: StyledMenuVariant=StyledMenuWithInputsInside; break;
+       /* case FIELDS_PROPS: StyledMenuVariant=StyledMenuWithInputsInside; break;
+        case PAPER_TYPES: StyledMenuVariant=StyledMenuWithInputsInside; break;*/
         default: StyledMenuVariant=StyledMenu; break;
     }
     return (
