@@ -6,6 +6,7 @@ import {ExampleMiddleware} from "./MIDDLEWARES/ExampleMiddleware";
 import {sagaWatcher} from "./SAGA/sagas";
 import {sagaWatcherDraft} from "../components/CommonComps/Service&SAGA/DRAFT_MAIN_SAGA_WATCHER";
 
+
 const  saga=CreateSagaMiddleware();
 
 
@@ -22,3 +23,4 @@ export const store=createStore(rootReducer, compose(
 
 saga.run(sagaWatcher);
 saga.run(sagaWatcherDraft);
+

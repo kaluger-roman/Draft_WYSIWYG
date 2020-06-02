@@ -68,13 +68,108 @@ export function DraftNeedCheckPageImitation() {
     };
 }
 
+export function DraftDefineSelectedTableCells(newSelectedCells) {
+    return  {
+        type: types.DRAFT_DEFINE_SELECTED_TABLE_CELLS,
+        payload: newSelectedCells,
+    };
+}
+export function DraftNeedMergeTableCells(isNeed) {
+    return  {
+        type: types.DRAFT_NEED_MERGE_TABLE_CELLS,
+        payload: isNeed,
+    };
+}
+export function DraftNeedSplitTableCells(isNeed) {
+    return  {
+        type: types.DRAFT_NEED_SPLIT_TABLE_CELLS,
+        payload: isNeed,
+    };
+}
+export function DraftConfigSplitTableCells(config) {
+    return  {
+        type: types.DRAFT_CONFIG_SPLIT_TABLE_CELLS,
+        payload: config,
+    };
+}
+export function DraftSelectTableRow(SelectedTableRowSFirstCellIdS) {
+    return  {
+        type: types.DRAFT_SELECT_TABLE_ROW,
+        payload: SelectedTableRowSFirstCellIdS,
+    };
+}
+export function DraftSelectTableColumn(selectedFirstCellIDInCol) {
+    return  {
+        type: types.DRAFT_SELECT_TABLE_COLUMN,
+        payload: selectedFirstCellIDInCol,
+    };
+}
 export function DraftSetPageFieldsToStore(newFieldsInPX) {
     return  {
         type: types.DRAFT_SET_PAGE_FIELDS_TO_STORE,
         payload:newFieldsInPX,
     };
 }
-
+export function DraftNeedDeleteRowsWithSelection(isNeed) {
+    return  {
+        type: types.DRAFT_NEED_DELETE_ROWS_WITH_SELECTION,
+        payload:isNeed,
+    };
+}
+export function DraftNeedDeleteColumnsWithSelection(isNeed) {
+    return  {
+        type: types.DRAFT_NEED_DELETE_COLUMNS_WITH_SELECTION,
+        payload:isNeed,
+    };
+}
+export function DraftNeedDeleteRowsWithFULLSelection(isNeed) {
+    return  {
+        type: types.DRAFT_NEED_DELETE_ROWS_WITH_FULL_SELECTION,
+        payload:isNeed,
+    };
+}
+export function DraftNeedDeleteColumnsWithFULLSelection(isNeed) {
+    return  {
+        type: types.DRAFT_NEED_DELETE_COLUMNS_WITH_FULL_SELECTION,
+        payload:isNeed,
+    };
+}
+export function DraftNeedShowInsertColumnSign(afterWhatID) {
+    return  {
+        type: types.DRAFT_NEED_SHOW_INSERT_COLUMN_SIGN,
+        payload:afterWhatID,
+    };
+}
+export function DraftNeedShowInsertRowSign(afterWhatID) {
+    return  {
+        type: types.DRAFT_NEED_SHOW_INSERT_ROW_SIGN,
+        payload:afterWhatID,
+    };
+}
+export function DraftInsertColumnTable(afterWhatID) {
+    return  {
+        type: types.DRAFT_INSERT_COLUMN_TABLE,
+        payload:afterWhatID,
+    };
+}
+export function DraftInsertRowTable(afterWhatID) {
+    return  {
+        type: types.DRAFT_INSERT_ROW_TABLE,
+        payload:afterWhatID,
+    };
+}
+export function DraftDefineCellsColShowInsertSign(cellsIDs) {
+    return  {
+        type: types.DRAFT_DEFINE_CELLS_SHOW_INSERT_COL_SIGN_AFTER,
+        payload:cellsIDs,
+    };
+}
+export function DraftDefineCellsRowShowInsertSign(cellsIDs) {
+    return  {
+        type: types.DRAFT_DEFINE_CELLS_SHOW_INSERT_ROW_SIGN_AFTER,
+        payload:cellsIDs,
+    };
+}
 
 
 

@@ -1,9 +1,19 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import * as $ from 'jquery';
 import {AtomicBlockUtils} from 'draft-js'
-import {TABLE_ENTITY_TYPE} from "../../styles/ConstructorStyles/DraftStyles/NAMING_CONSTANTS";
-import {CREATED_TABLES} from "../EmbedElements/TableEmbedElement";
+import {TABLE_ENTITY_TYPE} from "../../../styles/ConstructorStyles/DraftStyles/NAMING_CONSTANTS";
+import {CREATED_TABLES} from "./TableEmbedElementV1";
 import uniqid from 'uniqid';
+import {CONFIG_TABLE_1} from "../../Service&SAGA/TABLE_CONFIGS";
+import Button from '@material-ui/core/Button';
+import TextField from "@material-ui/core/TextField";
+import {InputMergeTableManage} from "./MergeTableCellsManager";
+import MergeTypeIcon from '@material-ui/icons/MergeType';
+import {SplitTableCellsManager} from "./SplitTableCellsManager";
+import {DeleteRowsWithFULLSelectionManager, DeleteRowsWithSelectionManager} from "./DeleteRowsWithSelectionManager";
+import {DeleteColsWithFULLSelectionManager, DeleteColsWithSelectionManager} from "./DeleteColsWithSelectionManager";
+
+
 
 const CellOfTableManage=(props)=>{
     let {row,column,setCurCellHover,curCellHover, onClick}=props;
@@ -20,6 +30,8 @@ const CellOfTableManage=(props)=>{
         </div>
     )
 };
+
+
 
 export const TableManageBlock=(props)=>{
     const [curCellHover, setCurCellHover]=useState({row:undefined, column:undefined});
@@ -61,7 +73,7 @@ export const TableManageBlock=(props)=>{
         const tableID=uniqid('table_');
 
         const contentState = editorState.getCurrentContent();
-        const selectionState=editorState.getSelection();
+        //const selectionState=editorState.getSelection();
 
        /* if(selectionState.)
         var updatedSelection = selectionState.merge({
@@ -74,7 +86,9 @@ export const TableManageBlock=(props)=>{
 
 
         CREATED_TABLES[tableID]={
-            rows, columns
+            rows,
+            columns,
+            CONFIG_TABLE_PARAMS:CONFIG_TABLE_1
         };
 
 
@@ -83,6 +97,7 @@ export const TableManageBlock=(props)=>{
     },[]);
 
     return (
+        <React.Fragment>
         <div>
             <div id='tableSelectSizeControl'
                 style={{border:'1px ridge #000', display:'grid',  gridTemplateColumns: 'repeat(8, 1fr)', width:'10vmin',height:'10vmin', padding:'0.2vmin', position:'relative', cursor:'pointer'}}>
@@ -94,5 +109,25 @@ export const TableManageBlock=(props)=>{
                 Другое...
             </div>
         </div>
+        <div >
+            <InputMergeTableManage/>
+        </div>
+            <div >
+                <SplitTableCellsManager/>
+            </div>
+            <div >
+                <DeleteRowsWithSelectionManager/>
+            </div>
+            <div >
+                <DeleteRowsWithFULLSelectionManager/>
+            </div>
+            <div >
+                <DeleteColsWithSelectionManager/>
+            </div>
+            <div >
+                <DeleteColsWithFULLSelectionManager/>
+            </div>
+        </React.Fragment>
+
     )
 };

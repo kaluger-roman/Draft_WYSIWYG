@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import ToggleButton from '@material-ui/lab/ToggleButton';
@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const StylesForNumericInput={
+export const StylesForNumericInput={
     wrap: {
         background: '#E2E2E2',
         boxShadow: '0 0 1px 1px #fff inset, 1px 1px 5px -1px #000',
@@ -58,7 +58,7 @@ const StylesForNumericInput={
 };
 
 export const  FieldsPropsBlock=React.memo((props)=> {
-    const [fieldsValues, setFieldsValues] = React.useState({topField:0, bottomField:0, leftField:0, rightField:0});
+    const [fieldsValues, setFieldsValues] = React.useState(useSelector((state)=>state.Draft.pageFields));
     let { saveSelectionStateActionWrapper}=useContext(DraftMainContext);
     let [isAlertShown, setIsAlertShown] = React.useState(false);
 
@@ -92,6 +92,10 @@ export const  FieldsPropsBlock=React.memo((props)=> {
         setFieldsValues(newState);
         dispatch(DraftSetPageFieldsToStore(newState))
     }
+
+    useEffect(()=>{
+        dispatch(DraftSetPageFieldsToStore(fieldsValues));
+    }, []);
 
     return (
         <div>

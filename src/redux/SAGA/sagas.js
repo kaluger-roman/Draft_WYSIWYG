@@ -1,4 +1,4 @@
-import {takeEvery,put,call,select} from 'redux-saga/effects';
+import {takeEvery, put, call, select, throttle} from 'redux-saga/effects';
 import {SCROLL_UNDEFINED_ACTION} from "../actiontypes";
 import {exampleAsyncAction} from "../actions";
 import * as $ from "jquery";
@@ -6,7 +6,9 @@ import {useSelector} from "react-redux";
 import {store} from "../StorageRedux";
 import ROUTECONSTANTS from './../../Routing/ROUTECONSTANTS'
 export function* sagaWatcher() {
-   yield takeEvery(SCROLL_UNDEFINED_ACTION, sagaScrollWorker);
+   //yield takeEvery(SCROLL_UNDEFINED_ACTION, sagaScrollWorker);
+   yield throttle(100, SCROLL_UNDEFINED_ACTION, sagaScrollWorker);
+
 }
 
 function* sagaScrollWorker() {

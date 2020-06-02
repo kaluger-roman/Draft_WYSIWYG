@@ -1,6 +1,6 @@
 import * as St from "../styles/ConstructorStyles/RichTextEditorStyle.module.css";
 import {Editor, EditorState} from "draft-js";
-import React, {useEffect, useMemo, useRef} from "react";
+import React, {useCallback, useEffect, useMemo, useRef} from "react";
 import { useDispatch, useSelector} from "react-redux";
 import {
      DraftNeedCheckPageImitation, DraftNeedScrollToCurrentCaretPosition,
@@ -10,7 +10,139 @@ import Paper from "@material-ui/core/Paper";
 import * as $ from "jquery";
 const { domEvent } = require('dom-event-simulate');
 
+function focusEditorCallback(e,readOnly,editorState, onChange, DomEditorRef) {
+    {
+        if(readOnly){
+            setTimeout(()=>{console.log('фокусю '+ performance.now()); DomEditorRef.current.focus()},200);// пересмотреть
+            return;
+        }
 
+        let x=e.clientX;
+        let y=e.clientY;
+
+        let EditorRoot=$(`.DraftEditor-root`).get(0);
+        let EditorRootRectPoor=EditorRoot.getBoundingClientRect();
+        let stylesEditor=getComputedStyle(EditorRoot);
+        let EditorRootRect={
+            right:EditorRootRectPoor.right-(parseFloat(stylesEditor.paddingRight)+parseFloat(stylesEditor.marginRight)),
+            left:EditorRootRectPoor.left+(parseFloat(stylesEditor.paddingLeft)+parseFloat(stylesEditor.marginLeft)),
+            top:EditorRootRectPoor.top+(parseFloat(stylesEditor.paddingTop)+parseFloat(stylesEditor.marginTop)),
+            bottom:EditorRootRectPoor.bottom-(parseFloat(stylesEditor.paddingBottom)+parseFloat(stylesEditor.marginBottom)),
+            width:EditorRootRectPoor.width-(parseFloat(stylesEditor.paddingRight)+parseFloat(stylesEditor.marginRight)+parseFloat(stylesEditor.paddingLeft)+parseFloat(stylesEditor.marginLeft)),
+            height:EditorRootRectPoor.height-(parseFloat(stylesEditor.paddingTop)+parseFloat(stylesEditor.marginTop)+parseFloat(stylesEditor.paddingBottom)+parseFloat(stylesEditor.marginBottom)),
+        };
+
+
+        let exactElement=document.elementFromPoint(x, y);
+
+        if(exactElement.closest('div').getAttributeNames().includes('data-offset-key'))
+            return;
+
+        let key;
+        let zoneName;
+        let divEl;
+
+        if(y<EditorRootRect.top){
+            let firstBlock=editorState.getCurrentContent().getFirstBlock();
+            key=firstBlock.getKey();
+            zoneName='top';
+            divEl=EditorRoot.querySelector(`[data-offset-key^="${key}"]`)
+        }
+        else
+        if(y>EditorRootRect.bottom){
+            let lastBlock=editorState.getCurrentContent().getLastBlock();
+            key=lastBlock.getKey();
+            zoneName='bottom';
+            divEl=EditorRoot.querySelector(`[data-offset-key^="${key}"]`)
+        }
+        else{
+            zoneName='side';
+            let element;
+            let curSearchX=EditorRootRect.left;
+            while (!element || !(element.closest('div').getAttributeNames().includes('data-offset-key'))){
+                element = document.elementFromPoint(curSearchX, y);
+                curSearchX+=50;
+                if (curSearchX>EditorRootRect.right)
+                    break;
+            }
+
+            divEl=element.closest('div');
+            try {
+                key = divEl.getAttribute('data-offset-key').match(/^[^-]*/)[0];
+            }
+            catch (e) {
+                key=undefined;
+            }
+        }
+        if (key) {
+            let testRange= document.createRange();
+            let BlockKey=editorState.getCurrentContent().getBlockForKey(key);
+
+            if(BlockKey.getType()==="atomic")
+                return;
+
+            function findMinValInElementThreeWrapper(element){
+                let minVal=window.innerWidth;
+                let elWithMinVal;
+                let minInx;
+
+                //let distFunc=zoneName==='side'?(searchRect)=>Math.abs(x-searchRect.left):(searchRect)=>Math.sqrt((x-searchRect.left)**2+(y-searchRect.bottom)**2);
+
+                let sumOfLetters=0;
+                let bufferSum=0;
+                function findMinValInElementThree(element){//element -div
+                    if (element.nodeName!=='#text'){
+                        element.childNodes.forEach((child)=>findMinValInElementThree(child));
+                    }
+                    else {
+                        let length=element.textContent.length;
+                        for (let i=0;i<length;i++){
+                            bufferSum+=1;
+                            testRange.setStart(element,i);
+                            testRange.setEnd(element,i);
+                            let searchRect=testRange.getBoundingClientRect();
+                            let curDist=Math.sqrt((x-searchRect.left)**2+(y-searchRect.bottom)**2);//Math.abs(x-searchRect.left);
+                            if(minVal>curDist) {
+                                minVal = curDist;
+                                elWithMinVal=element;
+                                minInx=i;
+                                sumOfLetters+=bufferSum;
+                                bufferSum=0;
+                            }
+                        }
+                        if(sumOfLetters===BlockKey.getLength())
+                            minInx+=1;
+                    }
+                }
+                findMinValInElementThree(element);
+                return {elWithMinVal,minInx}
+            }
+
+            let {elWithMinVal,minInx}=findMinValInElementThreeWrapper(divEl);
+
+            onChange(EditorState.forceSelection(editorState, editorState.getSelection().merge({
+                hasFocus: false,
+            })));
+            setTimeout(()=>{
+                try {
+                    let sel = window.getSelection();
+                    testRange.setStart(elWithMinVal, minInx);
+                    testRange.collapse(true);
+                    sel.removeAllRanges();
+                    sel.addRange(testRange);
+                }
+                catch (e) {
+                    console.log(e.message)
+                    console.log(e.stackTrace)
+                    console.log('проверь выделение при клике вне редактора')
+                }
+
+            },0)
+
+        }
+
+    }
+}
 
 
 function PaperForImitation(props) {
@@ -92,139 +224,10 @@ export default /*React.memo(*/(props) => {
         return getBlankPageImitations(pageImitationsCount, dispatch, pageFields,curPagePaperType,orientation)
     }, [pageImitationsCount, pageFields, curPagePaperType,orientation]);
 
+    const focusCallback=useCallback((e)=>{focusEditorCallback(e,readOnly,editorState, onChange,DomEditorRef)},[readOnly, editorState]);
 
     return (
-        <div className={St.ContainerForPagesAndEditor}  onMouseDown={(e) => {
-        if(readOnly)
-            return;
-
-        let x=e.clientX;
-        let y=e.clientY;
-
-        let EditorRoot=$(`.DraftEditor-root`).get(0);
-        let EditorRootRectPoor=EditorRoot.getBoundingClientRect();
-        let stylesEditor=getComputedStyle(EditorRoot);
-        let EditorRootRect={
-            right:EditorRootRectPoor.right-(parseFloat(stylesEditor.paddingRight)+parseFloat(stylesEditor.marginRight)),
-            left:EditorRootRectPoor.left+(parseFloat(stylesEditor.paddingLeft)+parseFloat(stylesEditor.marginLeft)),
-            top:EditorRootRectPoor.top+(parseFloat(stylesEditor.paddingTop)+parseFloat(stylesEditor.marginTop)),
-            bottom:EditorRootRectPoor.bottom-(parseFloat(stylesEditor.paddingBottom)+parseFloat(stylesEditor.marginBottom)),
-            width:EditorRootRectPoor.width-(parseFloat(stylesEditor.paddingRight)+parseFloat(stylesEditor.marginRight)+parseFloat(stylesEditor.paddingLeft)+parseFloat(stylesEditor.marginLeft)),
-            height:EditorRootRectPoor.height-(parseFloat(stylesEditor.paddingTop)+parseFloat(stylesEditor.marginTop)+parseFloat(stylesEditor.paddingBottom)+parseFloat(stylesEditor.marginBottom)),
-        };
-
-
-        let exactElement=document.elementFromPoint(x, y);
-
-        if(exactElement.closest('div').getAttributeNames().includes('data-offset-key'))
-            return;
-
-        let key;
-        let zoneName;
-        let divEl;
-
-        if(y<EditorRootRect.top){
-            let firstBlock=editorState.getCurrentContent().getFirstBlock();
-            key=firstBlock.getKey();
-            zoneName='top';
-            divEl=EditorRoot.querySelector(`[data-offset-key^="${key}"]`)
-        }
-        else
-        if(y>EditorRootRect.bottom){
-            let lastBlock=editorState.getCurrentContent().getLastBlock();
-            key=lastBlock.getKey();
-            zoneName='bottom';
-            divEl=EditorRoot.querySelector(`[data-offset-key^="${key}"]`)
-        }
-        else{
-            zoneName='side';
-            let element;
-             let curSearchX=EditorRootRect.left;
-             while (!element || !(element.closest('div').getAttributeNames().includes('data-offset-key'))){
-                    element = document.elementFromPoint(curSearchX, y);
-                    curSearchX+=50;
-                    if (curSearchX>EditorRootRect.right)
-                        break;
-                }
-
-                divEl=element.closest('div');
-          try {
-              key = divEl.getAttribute('data-offset-key').match(/^[^-]*/)[0];
-          }
-          catch (e) {
-              key=undefined;
-          }
-        }
-if (key) {
-    let testRange= document.createRange();
-    let BlockKey=editorState.getCurrentContent().getBlockForKey(key);
-
-    if(BlockKey.getType()==="atomic")
-        return;
-
-    function findMinValInElementThreeWrapper(element){
-        let minVal=window.innerWidth;
-        let elWithMinVal;
-        let minInx;
-
-        //let distFunc=zoneName==='side'?(searchRect)=>Math.abs(x-searchRect.left):(searchRect)=>Math.sqrt((x-searchRect.left)**2+(y-searchRect.bottom)**2);
-
-        let sumOfLetters=0;
-        let bufferSum=0;
-        function findMinValInElementThree(element){//element -div
-            if (element.nodeName!=='#text'){
-                element.childNodes.forEach((child)=>findMinValInElementThree(child));
-            }
-            else {
-                let length=element.textContent.length;
-                for (let i=0;i<length;i++){
-                    bufferSum+=1;
-                    testRange.setStart(element,i);
-                    testRange.setEnd(element,i);
-                    let searchRect=testRange.getBoundingClientRect();
-                    let curDist=Math.sqrt((x-searchRect.left)**2+(y-searchRect.bottom)**2);//Math.abs(x-searchRect.left);
-                    if(minVal>curDist) {
-                        minVal = curDist;
-                        elWithMinVal=element;
-                        minInx=i;
-                        sumOfLetters+=bufferSum;
-                        bufferSum=0;
-                    }
-                }
-                if(sumOfLetters===BlockKey.getLength())
-                    minInx+=1;
-            }
-        }
-        findMinValInElementThree(element);
-        return {elWithMinVal,minInx}
-    }
-
-    let {elWithMinVal,minInx}=findMinValInElementThreeWrapper(divEl);
-
-    onChange(EditorState.forceSelection(editorState, editorState.getSelection().merge({
-        hasFocus: false,
-    })));
-    setTimeout(()=>{
-        try {
-            let sel = window.getSelection();
-            testRange.setStart(elWithMinVal, minInx);
-            testRange.collapse(true);
-            sel.removeAllRanges();
-            sel.addRange(testRange);
-        }
-        catch (e) {
-            console.log(e.message)
-            console.log(e.stackTrace)
-            console.log('проверь выделение при клике вне редактора')
-        }
-
-    },0)
-
-}
-
-}}
-
-
+        <div className={St.ContainerForPagesAndEditor}  onMouseDown={(e) =>focusCallback(e) }
         >
             <div id='RichEditoreditor_'
                  >

@@ -6,7 +6,6 @@
     margin-left:auto;
     margin-right:auto;
     width: 100%;
-   /* visibility: hidden;*/
 }
 #RichEditoreditor_{
     border-top: 1px solid #ddd;
@@ -16,4 +15,19 @@
     position: relative;
     z-index: 0;
     width: 100%;
+}
+
+
+.table-selection *::selection {
+    background: transparent;
+    color: inherit;
+}
+
+.table-selection *::-moz-selection {
+    background: transparent;
+    color: inherit;
+}
+
+.table-selection td.selected {
+    background: rgba(0, 123, 255, .25);
 }

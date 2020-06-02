@@ -18,7 +18,6 @@ import {
     FONT_FAMILY_PICKER,
     FONT_SIZE_PICKER, PAPER_ORIENTATION, PAPER_TYPES, TABLE_ENTITY_TYPE
 } from "../styles/ConstructorStyles/DraftStyles/NAMING_CONSTANTS";
-import Paper from "@material-ui/core/Paper";
 import {SaveToPcButton} from "../CommonComps/AuxiliaryComps/SaveToPC_BTN";
 import './../styles/ConstructorStyles/GlobalDraftStyles.css'
 
@@ -27,8 +26,39 @@ import DraftEditorContainer from "../CommonComps/DraftEditorContainer";
 import {ClearInlineStylesOfSuffiksEachCharacter} from "../CommonComps/Service&SAGA/DraftUtils/ClearInlineStylesOfSuffiksEachCharacter";
 import {ScalePropsBlock} from "../CommonComps/AuxiliaryComps/ScalePropsBlock";
 import {StatsInfoBlock} from "../CommonComps/AuxiliaryComps/StatsInfoBlock";
-import {TableManageBlock} from "../CommonComps/PropsBlocks/TableManageBlock";
-import {TableEmbedElement} from "../CommonComps/EmbedElements/TableEmbedElement";
+import {TableManageBlock} from "../CommonComps/EmbedElements/Tables/TableManageBlock";
+import {TableEmbedElement} from "../CommonComps/EmbedElements/Tables/TableEmbedElementV1";
+
+const nativeSelectionExtend = Selection.prototype.extend;
+
+Selection.prototype.extend = function (...args) {
+    try {
+        return nativeSelectionExtend.apply(this, args);
+    } catch (error) {
+        console.log('Selection error.', error);
+    }
+};
+
+/*const _addRange = Selection.prototype.addRange;
+Selection.prototype.addRange = function() {
+    _addRange.apply(this, arguments);
+
+    if (this.rangeCount === 0) {
+        _addRange.apply(this, arguments);
+    }
+}*/
+/*if (Selection.prototype.extend.toString().includes('[native code]')) {
+    const nativeSelectionExtend = Selection.prototype.extend;
+
+    Selection.prototype.extend = function (...args) {
+        try {
+            return nativeSelectionExtend.apply(this, args);
+        } catch (error) {
+            console.log('Selection error.', error);
+        }
+    };
+}*/
+
 
 export class RichTextEditor extends React.Component {
     constructor(props) {
@@ -87,6 +117,19 @@ export class RichTextEditor extends React.Component {
             }
             let {editorState} = this.state;
             this.selectionbefore = editorState.getSelection();
+            ////
+
+
+
+            let selectionStartBlockKey=this.selectionbefore.getStartKey();
+            let contentState=editorState.getCurrentContent();
+            let selBlockType=contentState.getBlockForKey(selectionStartBlockKey).getType();
+            console.log(this.selectionbefore.getHasFocus());
+            let windsel=window.getSelection();
+            if (selBlockType==='atomic'){
+                return ;
+            }
+            ///
             let statebefore=this.state.editorState;
 
             if(wrapFunc && !e && !params.length>0){
@@ -266,6 +309,8 @@ export class RichTextEditor extends React.Component {
                 editable: false,//вызывает вопросы, но иначе ошибка из-за отсутствия выделения, возможно не роляет за счет readonly
                 props: {
                     toggleEditorReadOnly:this.toggleEditorReadOnly,
+                    editorState: this.state.editorState,
+                    onChange: (state)=>this.onChange(state),
                     //children: contentBlock.getText()
                 },
             };

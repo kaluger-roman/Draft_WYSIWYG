@@ -1,3 +1,4 @@
+const webpack =require ("webpack");
 const path = require ('path');
 const HtmlWebpackPlugin= require('html-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
@@ -21,6 +22,14 @@ module.exports={
         new HtmlWebpackPlugin({
             template: "./src/index.html",
         }),
+
+        new webpack.ProvidePlugin({
+             $: "jquery/dist/jquery.js",
+             jQuery: "jquery/dist/jquery.js",
+             "window.jQuery": "jquery/dist/jquery.js",
+             'window.$': "jquery/dist/jquery.js",
+        })
+
     ],
     module: {
         rules: [
@@ -77,7 +86,7 @@ module.exports={
                         presets:[
                             "@babel/preset-env",
                             "@babel/preset-react"
-                        ]
+                        ],
                     }
                 }
             }

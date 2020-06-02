@@ -1,36 +1,39 @@
-import {call, takeEvery, select, put} from "@redux-saga/core/effects";
+import {call, takeEvery, select, put, throttle, takeLeading} from "@redux-saga/core/effects";
 import {
     DRAFT_NEED_CHECK_PAGE_IMITATION,
     DRAFT_NEED_SCROLL_TO_CURRENT_CARET_POSITION,
     DRAFT_CHANGE_PAPER_TYPE,
     DRAFT_NEED_CHANGE_PAGE_FIELDS,
     DRAFT_SET_PAGE_FIELDS_TO_STORE,
-    DRAFT_CHANGE_PAPER_ORIENTATION, DRAFT_CHANGE_SCALE
+    DRAFT_CHANGE_PAPER_ORIENTATION, DRAFT_CHANGE_SCALE,
+    DRAFT_NEED_MERGE_TABLE_CELLS, DRAFT_NEED_SHOW_INSERT_ROW_SIGN, DRAFT_NEED_SHOW_INSERT_COLUMN_SIGN
 } from "../../../redux/actiontypes";
 import * as St from "../../styles/ConstructorStyles/RichTextEditorStyle.module.css";
-import * as $ from "jquery";
 import {
-    DraftAddPageIMITATION, DraftChangeBottomLinePaper,
-    DraftChangeMonitorPaperSize, DraftChangePaperType,
-    DraftRemovePageIMITATION, DraftSetPageFieldsToStore
+    DraftAddPageIMITATION,
+    DraftChangeBottomLinePaper,
+    DraftChangeMonitorPaperSize,
+    DraftChangePaperType,
+    DraftDefineCellsColShowInsertSign,
+    DraftDefineCellsRowShowInsertSign,
+    DraftNeedMergeTableCells,
+    DraftRemovePageIMITATION,
+    DraftSetPageFieldsToStore
 } from "../../../redux/actions";
-import {
-    LIST_OF_COMMON_PAPER_TYPES,
-    Custom_Page_PAPER,
-    basicFontSizeUnitInMM,
-    UnitOfFontSizePX,
-    basicFontSizeUnitInCM
-} from "./PageSizeConstants";
+import {findLastInArr, getNextArrEl, getTableByCellId, getTableIdByCellId} from "../EmbedElements/Tables/TableUtils";
+import {getParsedTable, transposeMatrix} from "../EmbedElements/Tables/GetParsedTableCheerIO";
+
 
 export function* sagaWatcherDraft() {
-    yield takeEvery(DRAFT_NEED_SCROLL_TO_CURRENT_CARET_POSITION, ScrollToCurCaret);
-    yield takeEvery(DRAFT_NEED_CHECK_PAGE_IMITATION, CheckPageImitation);
+    yield throttle(300, 'DRAFT_NEED_SCROLL_TO_CURRENT_CARET_POSITION', ScrollToCurCaret);
+    yield throttle(1000, 'DRAFT_NEED_CHECK_PAGE_IMITATION', CheckPageImitation);
     yield takeEvery(DRAFT_CHANGE_PAPER_TYPE, ChangePaperTypeEffects);
     yield takeEvery(DRAFT_SET_PAGE_FIELDS_TO_STORE, ChangePaperFieldsEffects);
     yield takeEvery(DRAFT_CHANGE_PAPER_ORIENTATION, ChangePaperOrientationEffects);
     yield takeEvery(DRAFT_CHANGE_SCALE, ChangeScaleEffects);
 
-
+    yield takeEvery(DRAFT_NEED_SHOW_INSERT_ROW_SIGN, DefineCellsToShowInsertRowSign);
+    yield takeEvery(DRAFT_NEED_SHOW_INSERT_COLUMN_SIGN, DefineCellsToShowInsertColSign);
 }
 
 export const convertMMtoPX = (valMM) => valMM * 3.779528;
@@ -56,8 +59,10 @@ function *getUptimeState
     return {fieldsObj,pageImitationsCount,curPagePaperType,orientation,ScaleOfView,bottomLinePaper};
 }
 
+
 function AlignEditor(curPagePaperType, orientation) {
-    $(`.DraftEditor-root`).css({width: `${curPagePaperType[orientation].width}mm`});
+
+    $(`#RichEditoreditor_>.DraftEditor-root`).css({width: `${curPagePaperType[orientation].width}mm`});
    $(`#RichEditoreditor_`).css({width: `${curPagePaperType[orientation].width}mm`});
 }
 
@@ -65,11 +70,9 @@ function AlignEditor(curPagePaperType, orientation) {
 function* ChangeScaleEffects(action) {
     const newScale=action.payload;
     $(`#RichEditoreditor_`).css({transform: `scale(${newScale/100})`,webkitTransformOrigin: '50% 0%', transformOrigin:' 50% 0%'});
-
-
-
-
-
+   /* let event = new Event('onScaleChange',{bubbles: true});
+    event.newScale=newScale;
+    $(`#RichEditoreditor_`)[0].dispatchEvent(event)*/
 
 }
 
@@ -88,7 +91,7 @@ function* ChangePaperOrientationEffects(action) {
 
 function* ChangePaperFieldsEffects(action) {
     const {topField, rightField, bottomField, leftField} = action.payload;//в mm
-    $(`.DraftEditor-root`).css({padding: `${topField}mm ${rightField}mm ${bottomField}mm ${leftField}mm`,});
+    $(`#RichEditoreditor_>.DraftEditor-root`).css({padding: `${topField}mm ${rightField}mm ${bottomField}mm ${leftField}mm`,});
     yield call(CheckPageImitation, null,{fieldsObj:action.payload});
 }
 
@@ -99,6 +102,7 @@ function* calculateDispatchBottomLinePaper(action,preserveParams) {
 }
 
 function* ScrollToCurCaret() {
+
     const curSelection=window.getSelection();
     if(!curSelection.anchorNode)
         return;
@@ -112,7 +116,7 @@ function* ScrollToCurCaret() {
     let clientRectSelection;
     let RectEditorContainer;
     try {
-        clientRectSelection = curSelection.getRangeAt(0)./*startContainer.parentElement.*/getBoundingClientRect();
+        clientRectSelection = curSelection.getRangeAt(0).startContainer.parentElement.getBoundingClientRect();
         RectEditorContainer = ContainerForPagesAndEditor.getBoundingClientRect();
     } catch (e) {
         return;
@@ -127,11 +131,13 @@ function* ScrollToCurCaret() {
 }
 
 function* CheckPageImitation(action,preserveParams) {
+    console.log('мем    2' + performance.now())
+
     yield call(calculateDispatchBottomLinePaper,null,preserveParams);
     let {fieldsObj, bottomLinePaper,curPagePaperType,orientation}=yield call(getUptimeState, preserveParams);//проверка есть ли параметры, которые не успели попасть в стейт, если да, брать в учет их
 
     const curEffHeight = getEffectivePageHeightInPX(curPagePaperType, orientation, fieldsObj);
-    const bottomEditorTextSpaceInPX = $(`.DraftEditor-root`).outerHeight(true);//в px
+    const bottomEditorTextSpaceInPX =  $(`#RichEditoreditor_>.DraftEditor-root`).outerHeight(true);//в px
 
     let pageImitationNeedCount;
 
@@ -155,5 +161,46 @@ function* CheckPageImitation(action,preserveParams) {
 
         yield call(calculateDispatchBottomLinePaper)
     }
+    console.log('мем    2' + performance.now())
+}
+
+function* DefineCellsToShowInsertRowSign(action) {
+    let idCellShowRowAfter=action.payload;
+    if(!idCellShowRowAfter){
+        yield put (DraftDefineCellsRowShowInsertSign(undefined));
+        return;
+    }
+    let table=getTableByCellId(idCellShowRowAfter);
+    let parsedCols=getParsedTable(table);
+    let parsedRows=transposeMatrix(parsedCols);
+    let rowAfterToIns=findLastInArr(parsedRows, (el)=>el.includes(idCellShowRowAfter));
+    let nextRow=getNextArrEl(parsedRows,rowAfterToIns);
+
+    let cellsToShowSign=[];
+    rowAfterToIns.forEach((el,i)=>{
+        if (!nextRow || el!==nextRow[i]){
+            cellsToShowSign.push(el);
+        }
+    });
+    yield put (DraftDefineCellsRowShowInsertSign(cellsToShowSign));
+}
+function* DefineCellsToShowInsertColSign(action) {
+    let idCellShowColAfter=action.payload;
+    if(!idCellShowColAfter){
+        yield put (DraftDefineCellsColShowInsertSign(undefined));
+        return;
+    }
+    let table=getTableByCellId(idCellShowColAfter);
+    let parsedCols=getParsedTable(table);
+    let colAfterToIns=findLastInArr(parsedCols, (el)=>el.includes(idCellShowColAfter));
+    let nextCol=getNextArrEl(parsedCols,colAfterToIns);
+
+    let cellsToShowSign=[];
+    colAfterToIns.forEach((el,i)=>{
+        if (!nextCol || el!==nextCol[i]){
+            cellsToShowSign.push(el);
+        }
+    });
+    yield put (DraftDefineCellsColShowInsertSign(cellsToShowSign));
 }
 
