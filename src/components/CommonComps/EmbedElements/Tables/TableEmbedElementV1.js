@@ -62,16 +62,6 @@ export const TableEmbedElement=(props)=>{
 
     let dispatch= useDispatch();
     let [isAllCellsReadOnly, setIsAllCellsReadOnly]=useState(false);
-    let isNeedUpdateMerge=useRef(false);
-    let isNeedUpdateSplit=useRef(false);
-    let isNeedDeleteRowsWithPartSel=useRef(false);
-    let isNeedDeleteRowsWithFULLSel=useRef(false);
-    let isNeedDeleteColsWithPartSel=useRef(false);
-    let isNeedDeleteColsWithFULLSel=useRef(false);
-
-    let LOCAL_IdFirstColCellToInsertTable=useRef(undefined);
-    let LOCAL_IdFirstRowCellToInsertTable=useRef(undefined);
-
 
     let reasonIDofLastUpdate=useRef(undefined);
 
@@ -86,53 +76,48 @@ export const TableEmbedElement=(props)=>{
         MakeTableColResizable(tableID);
     },[LAYOUT_AND_EDITORS])
     useEffect(()=>{
-        if (MergeSelectedCellsNeed && selectedTableCells.tableID===tableID && !isNeedUpdateMerge.current) {
-            isNeedUpdateMerge.current=true;
-           setTimeout(()=> dispatch(DraftNeedMergeTableCells(false)));
+        if (MergeSelectedCellsNeed && selectedTableCells.tableID===tableID ) {
+           set_LAYOUT_AND_EDITORS((prev)=>getMergedTableCellsState(selectedTableCells,prev));
+           dispatch(DraftNeedMergeTableCells(false));
         }
     }, [MergeSelectedCellsNeed]);
     useEffect(()=>{
-            if (SplitSelectedCellsNeed && selectedTableCells.tableID===tableID && !isNeedUpdateSplit.current) {
-                isNeedUpdateSplit.current=true;
-                setTimeout(()=> dispatch(DraftNeedSplitTableCells(false)));
+            if (SplitSelectedCellsNeed && selectedTableCells.tableID===tableID) {
+                set_LAYOUT_AND_EDITORS((prev)=>getSplittedTableCellsState(selectedTableCells,prev,ConfigSplitTableCell,tableID));
+                dispatch(DraftNeedSplitTableCells(false));
             }
         }, [SplitSelectedCellsNeed]);
     useEffect(()=>{
-        if (NeedDeleteRowsWithSelection && selectedTableCells.tableID===tableID && !isNeedDeleteRowsWithPartSel.current) {
-            isNeedDeleteRowsWithPartSel.current=true;
-            setTimeout(()=> dispatch(DraftNeedDeleteRowsWithSelection(false)));
+        if (NeedDeleteRowsWithSelection && selectedTableCells.tableID===tableID) {
+            set_LAYOUT_AND_EDITORS((prev)=>getTableCellsStateDeleteRowsPartialSelection(selectedTableCells,prev));
+            dispatch(DraftNeedDeleteRowsWithSelection(false));
         }
     }, [NeedDeleteRowsWithSelection]);
     useEffect(()=>{
-        if (NeedDeleteRowsWithFULLSelection && selectedTableCells.tableID===tableID && !isNeedDeleteRowsWithFULLSel.current) {
-            isNeedDeleteRowsWithFULLSel.current=true;
-            setTimeout(()=> dispatch(DraftNeedDeleteRowsWithFULLSelection(false)));
+        if (NeedDeleteRowsWithFULLSelection && selectedTableCells.tableID===tableID) {
+            set_LAYOUT_AND_EDITORS((prev)=>getTableCellsStateDeleteRowsFullSelection(selectedTableCells,prev));
+            dispatch(DraftNeedDeleteRowsWithFULLSelection(false));
         }
     }, [NeedDeleteRowsWithFULLSelection]);
     useEffect(()=>{
-        if (NeedDeleteColumnsWithSelection && selectedTableCells.tableID===tableID && !isNeedDeleteColsWithPartSel.current) {
-            isNeedDeleteColsWithPartSel.current=true;
-            setTimeout(()=> dispatch(DraftNeedDeleteColumnsWithSelection(false)));
+        if (NeedDeleteColumnsWithSelection && selectedTableCells.tableID===tableID) {
+            set_LAYOUT_AND_EDITORS((prev)=>getTableCellsStateDeleteColumnsPartialSelection(selectedTableCells,prev));
+            dispatch(DraftNeedDeleteColumnsWithSelection(false));
         }
     }, [NeedDeleteColumnsWithSelection]);
     useEffect(()=>{
-        if (NeedDeleteColumnsWithFULLSelection && selectedTableCells.tableID===tableID && !isNeedDeleteColsWithFULLSel.current) {
-            isNeedDeleteColsWithFULLSel.current=true;
-            setTimeout(()=> dispatch(DraftNeedDeleteColumnsWithFULLSelection(false)));
+        if (NeedDeleteColumnsWithFULLSelection && selectedTableCells.tableID===tableID) {
+            set_LAYOUT_AND_EDITORS((prev)=>getTableCellsStateDeleteColumnsFullSelection(selectedTableCells,prev));
+            dispatch(DraftNeedDeleteColumnsWithFULLSelection(false));
         }
     }, [NeedDeleteColumnsWithFULLSelection]);
     useEffect(()=>{
-        if (IdFirstColCellToInsertTable && getTableByCellId(IdFirstColCellToInsertTable) && getTableByCellId(IdFirstColCellToInsertTable).id===tableID && !LOCAL_IdFirstColCellToInsertTable.current) {
-            LOCAL_IdFirstColCellToInsertTable.current=IdFirstColCellToInsertTable;
-            setTimeout(()=> dispatch(DraftInsertColumnTable(undefined)));
+        let table=getTableByCellId(IdFirstColCellToInsertTable);
+        if (IdFirstColCellToInsertTable && table && table.id===tableID) {
+           set_LAYOUT_AND_EDITORS((prev)=>getTableCellsStateInsertedCol(IdFirstColCellToInsertTable, prev, tableID));
+           dispatch(DraftInsertColumnTable(undefined));
         }
     }, [IdFirstColCellToInsertTable]);
-   /* useEffect(()=>{
-        if (IdFirstRowCellToInsertTable && getTableByCellId(IdFirstRowCellToInsertTable) && getTableByCellId(IdFirstRowCellToInsertTable).id===tableID && !LOCAL_IdFirstRowCellToInsertTable.current) {
-            LOCAL_IdFirstRowCellToInsertTable.current=IdFirstRowCellToInsertTable;
-            setTimeout(()=> dispatch(DraftInsertRowTable(undefined)));
-        }
-    }, [IdFirstRowCellToInsertTable]);*/
     useEffect(()=>{
         let table=getTableByCellId(IdFirstRowCellToInsertTable);
         if (IdFirstRowCellToInsertTable && table && table.id===tableID) {
@@ -140,58 +125,8 @@ export const TableEmbedElement=(props)=>{
             dispatch(DraftInsertRowTable(undefined));
         }
     }, [IdFirstRowCellToInsertTable]);
-    useEffect(()=>{
-        if (isNeedUpdateMerge.current){
-            isNeedUpdateMerge.current=false;
-            set_LAYOUT_AND_EDITORS((prev)=>getMergedTableCellsState(selectedTableCells,prev));
-        }
-    },[isNeedUpdateMerge.current])
-    useEffect(()=>{
-        if (isNeedUpdateSplit.current){
-            isNeedUpdateSplit.current=false;
-            set_LAYOUT_AND_EDITORS((prev)=>getSplittedTableCellsState(selectedTableCells,prev,ConfigSplitTableCell,tableID));
-        }
-    },[isNeedUpdateSplit.current])
-    useEffect(()=>{
-        if (isNeedDeleteRowsWithPartSel.current){
-            isNeedDeleteRowsWithPartSel.current=false;
-            set_LAYOUT_AND_EDITORS((prev)=>getTableCellsStateDeleteRowsPartialSelection(selectedTableCells,prev));
-        }
-    },[isNeedDeleteRowsWithPartSel.current])
-    useEffect(()=>{
-        if (isNeedDeleteRowsWithFULLSel.current){
-            isNeedDeleteRowsWithFULLSel.current=false;
-            set_LAYOUT_AND_EDITORS((prev)=>getTableCellsStateDeleteRowsFullSelection(selectedTableCells,prev));
-        }
-    },[isNeedDeleteRowsWithFULLSel.current])
-    useEffect(()=>{
-        if (isNeedDeleteColsWithPartSel.current){
-            isNeedDeleteColsWithPartSel.current=false;
-            set_LAYOUT_AND_EDITORS((prev)=>getTableCellsStateDeleteColumnsPartialSelection(selectedTableCells,prev));
-        }
-    },[isNeedDeleteColsWithPartSel.current])
-    useEffect(()=>{
-        if (isNeedDeleteColsWithFULLSel.current){
-            isNeedDeleteColsWithFULLSel.current=false;
-            set_LAYOUT_AND_EDITORS((prev)=>getTableCellsStateDeleteColumnsFullSelection(selectedTableCells,prev));
-        }
-    },[isNeedDeleteColsWithFULLSel.current])
-    useEffect(()=>{
-        if (LOCAL_IdFirstColCellToInsertTable.current){
-            let needId=LOCAL_IdFirstColCellToInsertTable.current;
-            LOCAL_IdFirstColCellToInsertTable.current=undefined;
-            set_LAYOUT_AND_EDITORS((prev)=>getTableCellsStateInsertedCol(needId, prev, tableID));
 
-        }
-    },[LOCAL_IdFirstColCellToInsertTable.current])
-    useEffect(()=>{
-        if (LOCAL_IdFirstRowCellToInsertTable.current){
-            let needId=LOCAL_IdFirstRowCellToInsertTable.current;
-            LOCAL_IdFirstRowCellToInsertTable.current=undefined;
-            set_LAYOUT_AND_EDITORS((prev)=>getTableCellsStateInsertedRow(needId, prev, tableID));
 
-        }
-    },[LOCAL_IdFirstRowCellToInsertTable.current])
 
     return(
  <div

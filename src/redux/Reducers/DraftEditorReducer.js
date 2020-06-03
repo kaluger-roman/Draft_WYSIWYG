@@ -39,8 +39,6 @@ const InitialState = {
     NeedDeleteRowsWithFULLSelection:false,
     NeedDeleteColumnsWithFULLSelection:false,
 
-    /*IdFirstColCellToShowInsertSign:undefined,
-    IdFirstRowCellToShowInsertSign:undefined,*/
     IdFirstColCellToInsertTable:undefined,
     IdFirstRowCellToInsertTable:undefined,
     IdCellsRowToShowInsertSign:undefined,
@@ -89,10 +87,6 @@ export const DraftEditorReducer = (state = InitialState, action) => {
         case types.DRAFT_NEED_DELETE_COLUMNS_WITH_FULL_SELECTION:
             return {...state, NeedDeleteColumnsWithFULLSelection: action.payload};
 
-       /* case types.DRAFT_NEED_SHOW_INSERT_COLUMN_SIGN:
-            return {...state, IdFirstColCellToShowInsertSign: action.payload};
-        case types.DRAFT_NEED_SHOW_INSERT_ROW_SIGN:
-            return {...state, IdFirstRowCellToShowInsertSign: action.payload};*/
         case types.DRAFT_INSERT_COLUMN_TABLE:
             return {...state, IdFirstColCellToInsertTable: action.payload};
         case types.DRAFT_INSERT_ROW_TABLE:

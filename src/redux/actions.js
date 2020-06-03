@@ -1,4 +1,10 @@
 const types= require( "./actiontypes");
+export const ACTION_TYPES_TO_THROTTLE_MIDDLEWARE_CHECK_NOTNULL=[//тротлить естли пэйлоэд одинаковый
+    types.DRAFT_INSERT_COLUMN_TABLE,
+    types.DRAFT_INSERT_ROW_TABLE,
+];
+export const ACTION_TYPES_TO_THROTTLE_MIDDLEWARE_ALWAYS=[//тротлить всегда
+];
 
 export function OpenCloseHelpMessenger() {
     return{

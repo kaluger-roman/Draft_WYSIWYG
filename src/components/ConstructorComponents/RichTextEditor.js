@@ -67,16 +67,11 @@ export class RichTextEditor extends React.Component {
             editorState: EditorState.createEmpty(new CompositeDecorator([
                 {
                     strategy: findLinkEntities,
-                    component: (props) => <Link {...props} editorState={this.state.editorState}
-                                                /*toggleEditorReadOnly={this.toggleEditorReadOnly}*//>,
+                    component: (props) => <Link {...props} editorState={this.state.editorState}/>,
                 },
             ])),
-            showURLInput: false,
-            urlValue: '',
             EditorReadOnly: false,
         };
-
-
 
         this.handleKeyCommand = this._handleKeyCommand.bind(this);
         this.mapKeyToEditorCommand = this._mapKeyToEditorCommand.bind(this);
@@ -84,12 +79,9 @@ export class RichTextEditor extends React.Component {
         this.toggleInlineStyle = this._toggleInlineStyle.bind(this);
 
 
-        this.onChange = editorState =>{
-            this.setState({editorState});
-        };
+        this.onChange = editorState =>this.setState({editorState});
         this.handleKeyCommand = this.handleKeyCommand.bind(this);
         //////////////////////
-
 
         this.promptForLink = this._promptForLink.bind(this);
         this.onURLChange = (e) => this.setState({urlValue: e.target.value});
@@ -98,7 +90,6 @@ export class RichTextEditor extends React.Component {
         this.removeLink = this._removeLink.bind(this);
         this.blockRendererFn = this.blockRendererFn.bind(this);
         this.saveSelectionStateActionWrapper=this._saveSelectionStateActionWrapper.bind(this);
-
         this.toggleEditorReadOnly = this.toggleEditorReadOnly.bind(this);
 
 
@@ -117,15 +108,10 @@ export class RichTextEditor extends React.Component {
             }
             let {editorState} = this.state;
             this.selectionbefore = editorState.getSelection();
-            ////
-
-
 
             let selectionStartBlockKey=this.selectionbefore.getStartKey();
             let contentState=editorState.getCurrentContent();
             let selBlockType=contentState.getBlockForKey(selectionStartBlockKey).getType();
-            console.log(this.selectionbefore.getHasFocus());
-            let windsel=window.getSelection();
             if (selBlockType==='atomic'){
                 return ;
             }
@@ -143,7 +129,6 @@ export class RichTextEditor extends React.Component {
                 statebefore= await wrapFunc(...params, statebefore);
             }
             const curinlinestyles=statebefore.getCurrentInlineStyle();
-            console.log("styles"+curinlinestyles)
             this.onChange((EditorState.setInlineStyleOverride(EditorState.forceSelection(statebefore, this.selectionbefore), curinlinestyles)))
         }
     };
@@ -227,28 +212,18 @@ export class RichTextEditor extends React.Component {
 
     _mapKeyToEditorCommand(e) {
         if (e.keyCode === 9 /* TAB */) {
-            const newEditorState = RichUtils.onTab(
-                e,
-                this.state.editorState,
-                4, /* maxDepth */
-            );
+            const newEditorState = RichUtils.onTab(e, this.state.editorState, 4);
             if (newEditorState !== this.state.editorState) {
                 this.onChange(newEditorState);
             }
             return;
         }
-
-
-        if (e.keyCode === 8 /* backspace */) {//гадость делает ошибку при удалении в начале пустого документа
-            const newEditorState = RichUtils.onBackspace(
-                this.state.editorState,
-            );
+        if (e.keyCode === 8 /* backspace */) {
+            const newEditorState = RichUtils.onBackspace(this.state.editorState,);
             if (newEditorState && newEditorState !== this.state.editorState) {
                this.onChange(newEditorState);
             }
-            /*return*/ //делает ошибка
         }
-
         return getDefaultKeyBinding(e);
     }
 
@@ -271,7 +246,6 @@ export class RichTextEditor extends React.Component {
                 const newContentState = ClearInlineStylesOfSuffiksEachCharacter(curContentState, curSelectionState, styleSuffiksToReplace);
                 statebefore = EditorState.push(statebefore, newContentState, 'change-inline-style');
             }
-
             else{
                 let DuplicateStyle=statebefore.getCurrentInlineStyle().toArray().find((value => (new RegExp(styleSuffiksToReplace)).test(value)));
                 if (DuplicateStyle) {
@@ -280,7 +254,6 @@ export class RichTextEditor extends React.Component {
             }
 
         }
-
         if (Array.isArray(inlineStyle)) {
             inlineStyle.forEach((val) => {
                 statebefore = RichUtils.toggleInlineStyle(statebefore, val)
@@ -288,7 +261,6 @@ export class RichTextEditor extends React.Component {
         } else {
             statebefore = RichUtils.toggleInlineStyle(statebefore, inlineStyle);
         }
-
         return statebefore;
     }
 
@@ -296,10 +268,8 @@ export class RichTextEditor extends React.Component {
 
      blockRendererFn(contentBlock) {
         const entityKey=contentBlock.getEntityAt(0);
-
         if (!entityKey)
             return;
-
         const entity=this.state.editorState.getCurrentContent().getEntity(entityKey);
         let entityType=entity.getType();
         const type = contentBlock.getType();
@@ -378,8 +348,6 @@ export class RichTextEditor extends React.Component {
 
 function blockStyleFn(block) {
     switch (block.getType()) {
-        /*case 'blockquote':
-            return `${St.RichEditorblockquote}`;*/
         case 'unstyled':
             return  `${St.blockStyleFnUnStyledBlockType}`
         default:
@@ -411,14 +379,6 @@ class StyleButton extends React.Component {
     }
 }
 
-let Examplewrappercomp=(props)=>{
-
-    return(
-        <div style={{backgroundColor: "rgba(255,0,2,0.48)", height:'10vmin', width:'10vmax', display:'inline-block'}}  contentEditable="false">
-            {props.children}
-        </div>
-    )
-};
 
 const BLOCK_TYPES = [
     {label: 'H1', blocktype: 'header-one'},

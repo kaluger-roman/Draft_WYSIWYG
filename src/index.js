@@ -5,11 +5,8 @@ import App from './App';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import * as serviceWorker from './serviceWorker';
-import {applyMiddleware, compose, createStore} from 'redux';
 import {Provider} from 'react-redux';
-
 import {store} from './redux/StorageRedux'
-
 
 ReactDOM.render(
   <React.StrictMode>
@@ -19,6 +16,5 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById('root')
 );
-
 
 serviceWorker.unregister();

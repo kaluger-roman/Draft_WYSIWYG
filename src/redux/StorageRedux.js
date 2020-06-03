@@ -5,6 +5,7 @@ import thunk from "redux-thunk";
 import {ExampleMiddleware} from "./MIDDLEWARES/ExampleMiddleware";
 import {sagaWatcher} from "./SAGA/sagas";
 import {sagaWatcherDraft} from "../components/CommonComps/Service&SAGA/DRAFT_MAIN_SAGA_WATCHER";
+import {ThrottleActions} from "./MIDDLEWARES/ThrottleActionsMiddleware";
 
 
 const  saga=CreateSagaMiddleware();
@@ -14,8 +15,8 @@ const devTools = window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_
 
 export const store=createStore(rootReducer, compose(
     applyMiddleware(
-        thunk,
-        ExampleMiddleware,
+       /* thunk,*/
+        ThrottleActions,
         saga,
     ),
     devTools

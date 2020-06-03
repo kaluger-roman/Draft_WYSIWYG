@@ -275,7 +275,7 @@ export const getTableCellsStateDeleteColumnsFullSelection = (selectedTableCells,
     }
 };
 export const getTableCellsStateInsertedCol=(idFirstCellInColAfterToIns, LAYOUT_AND_EDITORS,tableID)=>{
-    try {
+   /* try {*/
         let {layoutCols, IdEditorStates} = LAYOUT_AND_EDITORS;
         let inxBeforeNewCol=layoutCols.indexOf(findLastInArr(layoutCols, (col)=>col.includes(idFirstCellInColAfterToIns)));
         let newEmptyColToInsert=[];
@@ -287,10 +287,10 @@ export const getTableCellsStateInsertedCol=(idFirstCellInColAfterToIns, LAYOUT_A
         layoutCols=insertInInxArr(layoutCols, newEmptyColToInsert, inxBeforeNewCol+1);
 
         return {layoutCols, IdEditorStates}
-    } catch (e) {
+    /*} catch (e) {
         console.log(e);
         return LAYOUT_AND_EDITORS;
-    }
+    }*/
 };
 export const getTableCellsStateInsertedRow=(idFirstCellInRowAfterToIns, LAYOUT_AND_EDITORS,tableID)=>{
    /* try {*/
