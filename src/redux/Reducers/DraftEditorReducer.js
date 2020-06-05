@@ -44,6 +44,7 @@ const InitialState = {
     IdCellsRowToShowInsertSign:undefined,
     IdCellsColToShowInsertSign:undefined,
 
+    InlineToggleStyle_Suffiks_IdEditor_Obj:undefined,
 
     ConfigSplitTableCell:{cols:1, rows:1},
 
@@ -95,6 +96,9 @@ export const DraftEditorReducer = (state = InitialState, action) => {
             return {...state,IdCellsColToShowInsertSign : action.payload};
         case types.DRAFT_DEFINE_CELLS_SHOW_INSERT_ROW_SIGN_AFTER:
             return {...state,IdCellsRowToShowInsertSign : action.payload};
+
+        case types.DRAFT_INLINE_STYLE_TOGGLE:
+            return {...state,InlineToggleStyle_Suffiks_IdEditor_Obj : action.payload};
 
 
 

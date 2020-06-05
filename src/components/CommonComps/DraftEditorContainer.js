@@ -3,11 +3,16 @@ import {Editor, EditorState} from "draft-js";
 import React, {useCallback, useEffect, useMemo, useRef} from "react";
 import { useDispatch, useSelector} from "react-redux";
 import {
-     DraftNeedCheckPageImitation, DraftNeedScrollToCurrentCaretPosition,
+    DraftInlineStyleToggle,
+    DraftNeedCheckPageImitation, DraftNeedMergeTableCells, DraftNeedScrollToCurrentCaretPosition,
 } from "../../redux/actions";
 import  "../styles/ConstructorStyles/GlobalDraftStyles.css";
 import Paper from "@material-ui/core/Paper";
 import * as $ from "jquery";
+import {getMergedTableCellsState} from "./EmbedElements/Tables/TableUtils";
+import {_toggleInlineStyle} from "./Service&SAGA/DraftUtils/ToggleInlineStyle";
+import {REGEXP_COLOR_FILL_SUFFIKS} from "../styles/ConstructorStyles/DraftStyles/RegexpForStyleSuffiks";
+import {FindClosestToFocusEditorID} from "./Service&SAGA/DraftUtils/FindClosestToFocusEditor";
 const { domEvent } = require('dom-event-simulate');
 
 function focusEditorCallback(e,readOnly,editorState, onChange, DomEditorRef) {
@@ -75,12 +80,14 @@ function focusEditorCallback(e,readOnly,editorState, onChange, DomEditorRef) {
             }
         }
         if (key) {
-            let testRange= document.createRange();
             let BlockKey=editorState.getCurrentContent().getBlockForKey(key);
-
-            if(BlockKey.getType()==="atomic")
+            if(!BlockKey || BlockKey.getType()==="atomic"){
+                divEl.focus();
                 return;
+            }
 
+
+            let testRange= document.createRange();
             function findMinValInElementThreeWrapper(element){
                 let minVal=window.innerWidth;
                 let elWithMinVal;
@@ -204,7 +211,7 @@ export default /*React.memo(*/(props) => {
     let {textAlignment, blockStyleFn, customStyleMap, editorState, handleKeyCommand,
         keyBindingFn, onChange, spellCheck, readOnly, blockRendererFn,} = props;
 
-    let {pageImitationsCount, pageFields, curPagePaperType,orientation} = useSelector((state) => state.Draft);
+    let {pageImitationsCount, pageFields, curPagePaperType,orientation,InlineToggleStyle_Suffiks_IdEditor_Obj} = useSelector((state) => state.Draft);
     let dispatch = useDispatch();
 
     let DomEditorRef = useRef(null);
@@ -226,11 +233,17 @@ export default /*React.memo(*/(props) => {
 
     const focusCallback=useCallback((e)=>{focusEditorCallback(e,readOnly,editorState, onChange,DomEditorRef)},[readOnly, editorState]);
 
+    useEffect(()=>{
+        if (InlineToggleStyle_Suffiks_IdEditor_Obj && InlineToggleStyle_Suffiks_IdEditor_Obj.id==='RichEditoreditor_') {
+            let {styleName, regexp, id}=InlineToggleStyle_Suffiks_IdEditor_Obj;
+            onChange(_toggleInlineStyle(styleName,regexp,editorState));
+            dispatch(DraftInlineStyleToggle(undefined));
+        }
+    }, [InlineToggleStyle_Suffiks_IdEditor_Obj]);
     return (
         <div className={St.ContainerForPagesAndEditor}  onMouseDown={(e) =>focusCallback(e) }
         >
-            <div id='RichEditoreditor_'
-                 >
+            <div id='RichEditoreditor_' inner-draft-editor={'RichEditoreditor_'}>
                 {retOfBlankImitationPages}
                 <Editor
                     textAlignment={textAlignment}

@@ -40,8 +40,10 @@ import {
     setCurRowSelectionStartId,
     setCurColSelectionStartId, setCurColSelectionEndId
 } from "./TableEmbedCell";
+import './../../../styles/CommonStyles/commonstyles.css'
 
-TableSelection.initialize();
+
+TableSelection.initialize('.tableSelection','tableSelectedCell');
 
 
 
@@ -49,12 +51,13 @@ TableSelection.initialize();
 
 export const TableEmbedElement=(props)=>{
     const {block, contentState} = props;
-    const {toggleEditorReadOnly}=props.blockProps;
+    const {toggleEditorReadOnly,onChangeParent}=props.blockProps;
     let {MergeSelectedCellsNeed,SplitSelectedCellsNeed,selectedTableCells, ConfigSplitTableCell,
         NeedDeleteRowsWithSelection, NeedDeleteColumnsWithSelection, NeedDeleteRowsWithFULLSelection,
         NeedDeleteColumnsWithFULLSelection,IdFirstColCellToInsertTable,IdFirstRowCellToInsertTable}=useSelector((state)=>state.Draft);
     const {tableID} = contentState.getEntity(block.getEntityAt(0)).getData();
     const {rows, columns,CONFIG_TABLE_PARAMS}=CREATED_TABLES[tableID];
+
     let [LAYOUT_AND_EDITORS, set_LAYOUT_AND_EDITORS]=useState(createInitialLayoutTable(rows,columns,tableID));
     const onChange =useCallback((editorState, id) => set_LAYOUT_AND_EDITORS(
                                     (prevState)=>{reasonIDofLastUpdate.current=id;return {layoutCols:prevState.layoutCols,IdEditorStates:{...prevState.IdEditorStates,[id]:editorState}}}));
@@ -67,6 +70,7 @@ export const TableEmbedElement=(props)=>{
 
 
     const ret = useMemo(() => {
+        CREATED_TABLES[tableID].LAYOUT_AND_EDITORS=LAYOUT_AND_EDITORS;
         let localret=tableParserByLayout(LAYOUT_AND_EDITORS.layoutCols, LAYOUT_AND_EDITORS.IdEditorStates, isAllCellsReadOnly, tableID, CONFIG_TABLE_PARAMS, onChange, reasonIDofLastUpdate.current)
         reasonIDofLastUpdate.current=undefined;
         return localret;
@@ -76,37 +80,37 @@ export const TableEmbedElement=(props)=>{
         MakeTableColResizable(tableID);
     },[LAYOUT_AND_EDITORS])
     useEffect(()=>{
-        if (MergeSelectedCellsNeed && selectedTableCells.tableID===tableID ) {
+        if (MergeSelectedCellsNeed && selectedTableCells && selectedTableCells.tableID===tableID ) {
            set_LAYOUT_AND_EDITORS((prev)=>getMergedTableCellsState(selectedTableCells,prev));
            dispatch(DraftNeedMergeTableCells(false));
         }
     }, [MergeSelectedCellsNeed]);
     useEffect(()=>{
-            if (SplitSelectedCellsNeed && selectedTableCells.tableID===tableID) {
+            if (SplitSelectedCellsNeed && selectedTableCells && selectedTableCells.tableID===tableID) {
                 set_LAYOUT_AND_EDITORS((prev)=>getSplittedTableCellsState(selectedTableCells,prev,ConfigSplitTableCell,tableID));
                 dispatch(DraftNeedSplitTableCells(false));
             }
         }, [SplitSelectedCellsNeed]);
     useEffect(()=>{
-        if (NeedDeleteRowsWithSelection && selectedTableCells.tableID===tableID) {
+        if (NeedDeleteRowsWithSelection && selectedTableCells && selectedTableCells.tableID===tableID) {
             set_LAYOUT_AND_EDITORS((prev)=>getTableCellsStateDeleteRowsPartialSelection(selectedTableCells,prev));
             dispatch(DraftNeedDeleteRowsWithSelection(false));
         }
     }, [NeedDeleteRowsWithSelection]);
     useEffect(()=>{
-        if (NeedDeleteRowsWithFULLSelection && selectedTableCells.tableID===tableID) {
+        if (NeedDeleteRowsWithFULLSelection && selectedTableCells && selectedTableCells.tableID===tableID) {
             set_LAYOUT_AND_EDITORS((prev)=>getTableCellsStateDeleteRowsFullSelection(selectedTableCells,prev));
             dispatch(DraftNeedDeleteRowsWithFULLSelection(false));
         }
     }, [NeedDeleteRowsWithFULLSelection]);
     useEffect(()=>{
-        if (NeedDeleteColumnsWithSelection && selectedTableCells.tableID===tableID) {
+        if (NeedDeleteColumnsWithSelection && selectedTableCells && selectedTableCells.tableID===tableID) {
             set_LAYOUT_AND_EDITORS((prev)=>getTableCellsStateDeleteColumnsPartialSelection(selectedTableCells,prev));
             dispatch(DraftNeedDeleteColumnsWithSelection(false));
         }
     }, [NeedDeleteColumnsWithSelection]);
     useEffect(()=>{
-        if (NeedDeleteColumnsWithFULLSelection && selectedTableCells.tableID===tableID) {
+        if (NeedDeleteColumnsWithFULLSelection && selectedTableCells && selectedTableCells.tableID===tableID) {
             set_LAYOUT_AND_EDITORS((prev)=>getTableCellsStateDeleteColumnsFullSelection(selectedTableCells,prev));
             dispatch(DraftNeedDeleteColumnsWithFULLSelection(false));
         }
@@ -127,25 +131,27 @@ export const TableEmbedElement=(props)=>{
     }, [IdFirstRowCellToInsertTable]);
 
 
-
     return(
  <div
-      onMouseDown={(e=>{setIsAllCellsReadOnly(true)})}
+      onMouseDown={(e=>{toggleEditorReadOnly(true);setIsAllCellsReadOnly(true)})}
       onMouseUp={(e=>{
+          toggleEditorReadOnly(true);
           setIsAllCellsReadOnly(false);
           setCurRowSelectionEndId(undefined);
           setCurRowSelectionStartId(undefined);
           setCurColSelectionStartId(undefined);
           setCurColSelectionEndId(undefined);
+          e.stopPropagation();/* e.preventDefault();*/
       })}
-      onKeyUp={(e)=>e.stopPropagation()}
+      onKeyUp={(e)=>{e.stopPropagation()}}
       onKeyDown={(e)=>{e.stopPropagation()}}
-      onChange={(e)=>e.stopPropagation()}
-      onFocus={()=>{toggleEditorReadOnly(true); console.log('focus')}}
-      onBlur={()=>{toggleEditorReadOnly(false);console.log('blur' + performance.now())}}
+      onFocus={(e)=>{toggleEditorReadOnly(true);e.stopPropagation(); /*e.preventDefault()*/}}
+      onSelect={(e)=>{ e.stopPropagation(); /*e.preventDefault()*/}}
+      onBlur={()=>{toggleEditorReadOnly(false);}}
       id={`TableContainer${tableID}`}
+
       style={{width: "100%", maxWidth:'100%',margin:'0'}}>
-     <table className="table-selection"
+     <table className="tableSelection"
             id={`${tableID}`}
             width="100%"
             border="0"

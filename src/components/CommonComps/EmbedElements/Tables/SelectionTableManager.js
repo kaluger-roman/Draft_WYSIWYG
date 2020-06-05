@@ -93,13 +93,12 @@ export class TableSelection {
     }
 
     selectionChangeHandler() {
-
         let windowSel=window.getSelection();
-        if (!(windowSel && windowSel.anchorNode && windowSel.anchorNode.parentNode && windowSel.anchorNode.parentNode.closest('#RichEditoreditor_'))){
-           return;
-       };
-
         this.deselect();
+        if (windowSel.isCollapsed||!(windowSel && windowSel.anchorNode && windowSel.anchorNode.parentNode && windowSel.anchorNode.parentNode.closest('#RichEditoreditor_'))){
+            return;
+        };
+
         this.nativeSelection = window.getSelection ? getSelection() : null;
 
         if (!this.nativeSelection) {
@@ -157,6 +156,13 @@ export class TableSelection {
             })
         });
         cells=Array.from(new Set(cells)).map((cellId)=>document.getElementById(cellId));
+
+       if(cells.length>1){
+           document.documentElement.style.setProperty("--selection-background", "rgba(255, 160, 49, 0)");
+       }
+       else {
+           document.documentElement.style.setProperty("--selection-background", "rgba(255, 160, 49, 0.4)");
+       }
 
         store.dispatch(DraftDefineSelectedTableCells(
             {selectedCells: cells, tableID: tdStart.closest('table').id,

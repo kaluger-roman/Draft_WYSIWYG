@@ -1,6 +1,5 @@
 import React, {useRef} from "react";
 import {Editor} from "draft-js";
-import ArrowRightAltIcon from '@material-ui/icons/ArrowRightAlt';
 import {TABLE_CELL_TYPES} from "./TableUtils";
 import {useDispatch, useSelector} from "react-redux";
 import {
@@ -10,7 +9,7 @@ import {
     DraftSelectTableRow
 } from "../../../../redux/actions";
 import './../../../styles/CommonStyles/commonstyles.css'
-//import cursor from './../../../../../public/Cursors/arrow-23645.svg'
+import {InnerEmbedEditor} from "../InnerEmbedEditor";
 
 window.addEventListener('mouseup',()=>{
     setCurRowSelectionEndId(undefined);
@@ -33,7 +32,7 @@ let curColSelectionEndId;
 
 export const TableEmbedCell =(props)=>{
     const {id,colspan,rowspan,editorState,colInx, rowInx,tableID,isAllCellsReadOnly,onChange,CONFIG_TABLE_PARAMS}=props;
-    const DomEditorRef=useRef(null);
+    //const DomEditorRef=useRef(null);
     let {IdCellsRowToShowInsertSign,IdCellsColToShowInsertSign} = useSelector(state=>state.Draft);
     let dispatch=useDispatch();
 
@@ -44,11 +43,12 @@ export const TableEmbedCell =(props)=>{
             id={id}
             style={{border:`1px solid black`, minWidth:CONFIG_TABLE_PARAMS.minCellWidth+'px'}}
             onClick={()=>{
-                DomEditorRef.current.focus();
+                //DomEditorRef.current.focus();
             }}
         >
             {colInx === 1 ?
                 <div
+
                      onMouseDown={(e)=>{
                          e.preventDefault();
                          e.stopPropagation();
@@ -134,12 +134,19 @@ export const TableEmbedCell =(props)=>{
                 left:'0%', top:'calc(100% - 5px)', visibility: `${(IdCellsRowToShowInsertSign && IdCellsRowToShowInsertSign.includes(id))?'visible':"hidden"}`
             }}>
             </div>
-            <Editor
+            <InnerEmbedEditor
                 editorState={editorState}
-                onChange={(editorState)=>onChange(editorState, id)}
+                onChange={onChange}
+                outerReasonReadOnly={isAllCellsReadOnly}
+                id={id}
+            />
+           {/* <Editor
+                editorState={editorState}
+                onChange={(editorState)=>{onChange(editorState, id)}}
                 ref={DomEditorRef}
                 readOnly={isAllCellsReadOnly}
-            />
+                handleKeyCommand={(command,editorState)=>HandleKeyCommandFactory(onChange)(command,editorState)}
+            />*/}
         </td>
     )
 }

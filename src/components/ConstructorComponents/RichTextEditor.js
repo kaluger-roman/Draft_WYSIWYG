@@ -5,7 +5,6 @@ import {
     RichUtils,
     getDefaultKeyBinding,
     CompositeDecorator,
-    DefaultDraftBlockRenderMap, CharacterMetadata,
 } from 'draft-js';
 import * as Immutable from 'immutable'
 import {inlineStyleMap} from "../styles/ConstructorStyles/DraftStyles/INLINE_DRAFT_STYLES_JS";
@@ -21,13 +20,18 @@ import {
 import {SaveToPcButton} from "../CommonComps/AuxiliaryComps/SaveToPC_BTN";
 import './../styles/ConstructorStyles/GlobalDraftStyles.css'
 
-import {connect} from "react-redux";
 import DraftEditorContainer from "../CommonComps/DraftEditorContainer";
 import {ClearInlineStylesOfSuffiksEachCharacter} from "../CommonComps/Service&SAGA/DraftUtils/ClearInlineStylesOfSuffiksEachCharacter";
 import {ScalePropsBlock} from "../CommonComps/AuxiliaryComps/ScalePropsBlock";
 import {StatsInfoBlock} from "../CommonComps/AuxiliaryComps/StatsInfoBlock";
 import {TableManageBlock} from "../CommonComps/EmbedElements/Tables/TableManageBlock";
 import {TableEmbedElement} from "../CommonComps/EmbedElements/Tables/TableEmbedElementV1";
+import {_toggleInlineStyle} from './../CommonComps/Service&SAGA/DraftUtils/ToggleInlineStyle'
+import {MapKeyToEditorCommandFactory} from "../CommonComps/Service&SAGA/DraftUtils/MapKeyToEditorCommand";
+import { BlockRendererFnFactory} from "../CommonComps/Service&SAGA/DraftUtils/BlockRendererFunction";
+import {SaveSelectionStateActionWrapperFactory} from "../CommonComps/Service&SAGA/DraftUtils/SaveSelectionStateActionWrapper";
+import {HandleKeyCommandFactory} from "../CommonComps/Service&SAGA/DraftUtils/HandleKeyCommand";
+import {ToggleBlockTypeFactory} from "../CommonComps/Service&SAGA/DraftUtils/SmallEditorUtils";
 
 const nativeSelectionExtend = Selection.prototype.extend;
 
@@ -72,17 +76,11 @@ export class RichTextEditor extends React.Component {
             ])),
             EditorReadOnly: false,
         };
-
         this.handleKeyCommand = this._handleKeyCommand.bind(this);
         this.mapKeyToEditorCommand = this._mapKeyToEditorCommand.bind(this);
         this.toggleBlockType = this._toggleBlockType.bind(this);
-        this.toggleInlineStyle = this._toggleInlineStyle.bind(this);
-
-
+        this.toggleInlineStyle =_toggleInlineStyle.bind(this);
         this.onChange = editorState =>this.setState({editorState});
-        this.handleKeyCommand = this.handleKeyCommand.bind(this);
-        //////////////////////
-
         this.promptForLink = this._promptForLink.bind(this);
         this.onURLChange = (e) => this.setState({urlValue: e.target.value});
         this.confirmLink = this._confirmLink.bind(this);
@@ -92,46 +90,14 @@ export class RichTextEditor extends React.Component {
         this.saveSelectionStateActionWrapper=this._saveSelectionStateActionWrapper.bind(this);
         this.toggleEditorReadOnly = this.toggleEditorReadOnly.bind(this);
 
-
-
-    this.selectionbefore=undefined;
     this.contextvalue={
         saveSelectionStateActionWrapper: this.saveSelectionStateActionWrapper,
        }
-//////////////////////////////
     }
 
-    _saveSelectionStateActionWrapper(wrapFunc) {
-        return async (e,...params) => {
-            if (e) {
-                e.preventDefault();
-            }
-            let {editorState} = this.state;
-            this.selectionbefore = editorState.getSelection();
-
-            let selectionStartBlockKey=this.selectionbefore.getStartKey();
-            let contentState=editorState.getCurrentContent();
-            let selBlockType=contentState.getBlockForKey(selectionStartBlockKey).getType();
-            if (selBlockType==='atomic'){
-                return ;
-            }
-            ///
-            let statebefore=this.state.editorState;
-
-            if(wrapFunc && !e && !params.length>0){
-                await wrapFunc();
-            }
-
-            if(wrapFunc && e){
-               await wrapFunc(e);
-            }
-            if(wrapFunc && params.length>0){
-                statebefore= await wrapFunc(...params, statebefore);
-            }
-            const curinlinestyles=statebefore.getCurrentInlineStyle();
-            this.onChange((EditorState.setInlineStyleOverride(EditorState.forceSelection(statebefore, this.selectionbefore), curinlinestyles)))
-        }
-    };
+    _saveSelectionStateActionWrapper(wrapFunc){
+        return SaveSelectionStateActionWrapperFactory(this.state, this.onChange)(wrapFunc);
+    }
     //////////////////////////////
     _promptForLink(e) {
         e.preventDefault();
@@ -178,9 +144,7 @@ export class RichTextEditor extends React.Component {
             ),
             showURLInput: false,
             urlValue: '',
-        }/*, () => {
-            setTimeout(() => this.refs.editor.focus(), 0);
-        }*/);
+        });
     }
 
     _onLinkInputKeyDown(e) {
@@ -202,95 +166,24 @@ export class RichTextEditor extends React.Component {
 
     /////////////////////////
     _handleKeyCommand(command, editorState) {
-        const newState = RichUtils.handleKeyCommand(editorState, command);
-        if (newState) {
-            this.onChange(newState);
-            return 'handled';//или тру фолс?
-        }
-        return 'not-handled';
+       return HandleKeyCommandFactory(this.onChange)(command,editorState);
     }
 
     _mapKeyToEditorCommand(e) {
-        if (e.keyCode === 9 /* TAB */) {
-            const newEditorState = RichUtils.onTab(e, this.state.editorState, 4);
-            if (newEditorState !== this.state.editorState) {
-                this.onChange(newEditorState);
-            }
-            return;
-        }
-        if (e.keyCode === 8 /* backspace */) {
-            const newEditorState = RichUtils.onBackspace(this.state.editorState,);
-            if (newEditorState && newEditorState !== this.state.editorState) {
-               this.onChange(newEditorState);
-            }
-        }
-        return getDefaultKeyBinding(e);
+       return  MapKeyToEditorCommandFactory(this.state, this.onChange)(e);
     }
 
     _toggleBlockType(blockType) {
-        this.onChange(
-            RichUtils.toggleBlockType(
-                this.state.editorState,
-                blockType
-            )
-        );
+        return ToggleBlockTypeFactory(this.state, this.onChange)(blockType)
     }
-
-
-    async _toggleInlineStyle(inlineStyle, styleSuffiksToReplace, statebefore) { //styleSuffiksToReplace -суффикс стиля, если есть то должен заменить стиль с тем же суффиксом, например, для шрифтов, заменить старый, а не тыкнуть поверх
-
-        if (styleSuffiksToReplace) {//inlineStyle может быть массивом стилей, которые надо затоглить
-            const curContentState = statebefore.getCurrentContent();
-            const curSelectionState = statebefore.getSelection();
-            if (!curSelectionState.isCollapsed()) {
-                const newContentState = ClearInlineStylesOfSuffiksEachCharacter(curContentState, curSelectionState, styleSuffiksToReplace);
-                statebefore = EditorState.push(statebefore, newContentState, 'change-inline-style');
-            }
-            else{
-                let DuplicateStyle=statebefore.getCurrentInlineStyle().toArray().find((value => (new RegExp(styleSuffiksToReplace)).test(value)));
-                if (DuplicateStyle) {
-                    statebefore = RichUtils.toggleInlineStyle(statebefore, DuplicateStyle);
-                }
-            }
-
-        }
-        if (Array.isArray(inlineStyle)) {
-            inlineStyle.forEach((val) => {
-                statebefore = RichUtils.toggleInlineStyle(statebefore, val)
-            })
-        } else {
-            statebefore = RichUtils.toggleInlineStyle(statebefore, inlineStyle);
-        }
-        return statebefore;
-    }
-
-
 
      blockRendererFn(contentBlock) {
-        const entityKey=contentBlock.getEntityAt(0);
-        if (!entityKey)
-            return;
-        const entity=this.state.editorState.getCurrentContent().getEntity(entityKey);
-        let entityType=entity.getType();
-        const type = contentBlock.getType();
-        if (entityType===TABLE_ENTITY_TYPE) {
-            return {
-                component: TableEmbedElement,          //внутрь вставляется этот элемент, заменяя все внутри, сам элемент внешний принимает параметр эдитэбл
-                editable: false,//вызывает вопросы, но иначе ошибка из-за отсутствия выделения, возможно не роляет за счет readonly
-                props: {
-                    toggleEditorReadOnly:this.toggleEditorReadOnly,
-                    editorState: this.state.editorState,
-                    onChange: (state)=>this.onChange(state),
-                    //children: contentBlock.getText()
-                },
-            };
-        }
+        return  BlockRendererFnFactory(this.state, this.toggleEditorReadOnly)( contentBlock);
     }
     toggleEditorReadOnly(readonly) {
-        setTimeout(() => this.setState({EditorReadOnly: readonly}), 0)
+        this.setState({EditorReadOnly: readonly});
     }
-    componentDidMount() {
-    }
+
     render() {
         const {editorState} = this.state;
         ///////////////
@@ -336,7 +229,6 @@ export class RichTextEditor extends React.Component {
                    handleKeyCommand={this.handleKeyCommand}
                    keyBindingFn={this.mapKeyToEditorCommand}
                    onChange={this.onChange}
-                   spellCheck={true}
                    readOnly={this.state.EditorReadOnly}
                    blockRendererFn={this.blockRendererFn}
                />

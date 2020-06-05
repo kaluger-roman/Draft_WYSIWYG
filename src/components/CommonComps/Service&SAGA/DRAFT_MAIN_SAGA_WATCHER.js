@@ -12,7 +12,6 @@ import * as St from "../../styles/ConstructorStyles/RichTextEditorStyle.module.c
 import {
     DraftAddPageIMITATION,
     DraftChangeBottomLinePaper,
-    DraftChangeMonitorPaperSize,
     DraftChangePaperType,
     DraftDefineCellsColShowInsertSign,
     DraftDefineCellsRowShowInsertSign,
@@ -20,7 +19,7 @@ import {
     DraftRemovePageIMITATION,
     DraftSetPageFieldsToStore
 } from "../../../redux/actions";
-import {findLastInArr, getNextArrEl, getTableByCellId, getTableIdByCellId} from "../EmbedElements/Tables/TableUtils";
+import {findLastInArr, getNextArrEl, getTableByCellId} from "../EmbedElements/Tables/TableUtils";
 import {getParsedTable, transposeMatrix} from "../EmbedElements/Tables/GetParsedTableCheerIO";
 
 

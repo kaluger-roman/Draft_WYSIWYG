@@ -1,3 +1,6 @@
+:root {
+  --selection-background:  rgba(255, 160, 49, 0.40);
+}
 body{
   background-image: url("./../public/8643201bb419407c2653c20476c25e8c.jpg");
   background-repeat: round;
@@ -5,11 +8,10 @@ body{
   overflow-x: hidden;
 }
 ::-moz-selection { /* Code for Firefox */
-  background: rgba(255, 160, 49, 0.44);
+  background: var(--selection-background);
 }
-
 ::selection {
-  background: rgba(255, 160, 49, 0.44);
+  background: var(--selection-background);
 }
 
 ::-webkit-scrollbar {

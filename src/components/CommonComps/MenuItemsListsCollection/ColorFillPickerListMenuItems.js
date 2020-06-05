@@ -5,12 +5,16 @@ import {
 } from "../../styles/ConstructorStyles/DraftStyles/RegexpForStyleSuffiks";
 import { SketchPicker, CirclePicker } from 'react-color';
 import {inlineStyleMap} from './../../styles/ConstructorStyles/DraftStyles/INLINE_DRAFT_STYLES_JS'
+import {useDispatch} from "react-redux";
+import {FindClosestToFocusEditorID} from "../Service&SAGA/DraftUtils/FindClosestToFocusEditor";
+import {DraftInlineStyleToggle} from "../../../redux/actions";
 
 
 export const ColorFillPicker = React.memo((props) => {
     let [selectedColor, setSelectedColor] = React.useState('#fff');
     let {onToggle, currentStyle, shouldMenuSelectedItemUpdate}=props;
     let { saveSelectionStateActionWrapper}=useContext(DraftMainContext);
+    let dispatch=useDispatch();
 
     if(shouldMenuSelectedItemUpdate){
         const arrOfStyles=currentStyle.toArray();
@@ -36,7 +40,8 @@ export const ColorFillPicker = React.memo((props) => {
                 backgroundColor: color.hex,
             }
         }
-        saveSelectionStateActionWrapper(onToggle)(null, styleName, REGEXP_COLOR_FILL_SUFFIKS);
+        saveSelectionStateActionWrapper(dispatch)(null,DraftInlineStyleToggle({styleName:styleName, regexp: REGEXP_COLOR_FILL_SUFFIKS, id:FindClosestToFocusEditorID()}))
+        //saveSelectionStateActionWrapper(onToggle)(null, styleName, REGEXP_COLOR_FILL_SUFFIKS);
     };
 
     return (

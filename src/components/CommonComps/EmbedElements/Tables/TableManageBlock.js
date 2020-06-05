@@ -73,17 +73,8 @@ export const TableManageBlock=(props)=>{
         const tableID=uniqid('table_');
 
         const contentState = editorState.getCurrentContent();
-        //const selectionState=editorState.getSelection();
-
-       /* if(selectionState.)
-        var updatedSelection = selectionState.merge({
-            focusKey: 'bar',
-            focusOffset: 0,
-        });
-*/
         const contentStateWithEntity = contentState.createEntity(TABLE_ENTITY_TYPE, 'MUTABLE', {tableID});
         const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
-
 
         CREATED_TABLES[tableID]={
             rows,
@@ -92,9 +83,8 @@ export const TableManageBlock=(props)=>{
         };
 
 
-
         onChange(AtomicBlockUtils.insertAtomicBlock(editorState,entityKey,'<<<<<TABLE>>>>>'));
-    },[]);
+    },[editorState]);
 
     return (
         <React.Fragment>

@@ -7,11 +7,15 @@ import {REGEXP_FONT_FAMILY_SUFFIKS} from "../../styles/ConstructorStyles/DraftSt
 import ListItemIcon from "@material-ui/core/ListItemIcon/ListItemIcon";
 import {FontsMenuItem} from "../MenuItemsCollection/FontsMenuItem";
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
+import {DraftInlineStyleToggle} from "../../../redux/actions";
+import {FindClosestToFocusEditorID} from "../Service&SAGA/DraftUtils/FindClosestToFocusEditor";
+import {useDispatch} from "react-redux";
 
 export const FontsListMenuItems = React.memo((props) => {//можно сделать алгоритм как в списке размеров шрифтов, тогда легче код, но при таком количестве шрифтов в данном компеоненте юзмемо будет слишком много жрать производительности
     let {onToggle, currentStyle, shouldMenuSelectedItemUpdate}=props;
     let { saveSelectionStateActionWrapper}=useContext(DraftMainContext);
     let [oldSelectedItem, setOldSelectedItem] = React.useState({Elem:null, indexinret:null});
+    let dispatch=useDispatch();
     let ret = useMemo(()=>{
         let localret=[];
         for (let type in FONT_FAMILIES_STYLES) {
@@ -27,7 +31,8 @@ export const FontsListMenuItems = React.memo((props) => {//можно сдела
                     disabled={currentStyle.has(type)}
                     onMouseDown={(e)=>{
                         if (!e.target.disabled)
-                            saveSelectionStateActionWrapper(onToggle)(null, type, REGEXP_FONT_FAMILY_SUFFIKS);
+                            saveSelectionStateActionWrapper(dispatch)(null,DraftInlineStyleToggle({styleName:type, regexp: REGEXP_FONT_FAMILY_SUFFIKS, id:FindClosestToFocusEditorID()}))
+                        //saveSelectionStateActionWrapper(onToggle)(null, type, REGEXP_FONT_FAMILY_SUFFIKS);
                     }}
                     type={FONT_FAMILIES_STYLES.type}>
                     <ListItemIcon>

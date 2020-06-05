@@ -22,3 +22,19 @@
 .VisibleInnerImgOnHover:hover>img{
     visibility: visible;
 }
+.tableSelectedCell{
+    background-color: rgba(208, 113, 10, 0.39);
+}
+/*.transparentSelection::selection {
+    background: transparent!important;
+}
+.transparentSelection::-moz-selection {
+    background: transparent!important;
+}*/
+/*::-moz-selection { !* Code for Firefox *!
+    background: rgba(255, 160, 49, 0.44);
+}
+
+::selection {
+    background: rgba(255, 160, 49, 0.44);
+}*/

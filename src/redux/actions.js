@@ -176,11 +176,12 @@ export function DraftDefineCellsRowShowInsertSign(cellsIDs) {
         payload:cellsIDs,
     };
 }
-
-
-
-
-
+export function DraftInlineStyleToggle(Style_Suffiks_IdEditor_Obj) {
+    return  {
+        type: types.DRAFT_INLINE_STYLE_TOGGLE,
+        payload:Style_Suffiks_IdEditor_Obj,
+    };
+}
 
 
 export function exampleAsyncAction() {

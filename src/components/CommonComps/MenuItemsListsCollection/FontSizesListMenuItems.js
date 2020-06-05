@@ -15,7 +15,9 @@ import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
 import CancelTwoToneIcon from '@material-ui/icons/CancelTwoTone';
 import {inlineStyleMap} from "../../styles/ConstructorStyles/DraftStyles/INLINE_DRAFT_STYLES_JS";
 import {AlertDialogSlide} from "../AuxiliaryComps/AlertDialog";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {DraftInlineStyleToggle} from "../../../redux/actions";
+import {FindClosestToFocusEditorID} from "../Service&SAGA/DraftUtils/FindClosestToFocusEditor";
 
 
 
@@ -25,6 +27,8 @@ export const FontSizesListMenuItems = React.memo((props) => {
     let [selectedFontSize, setSelectedFontSIze] = React.useState(null);
     let [isAlertShown, setIsAlertShown] = React.useState(false);
     let [isInputFocused, setIsInputFocused] = React.useState(false);
+    let dispatch=useDispatch();
+
     const basicUnitOfFontSizeInVmax=useSelector((state)=>state.Draft.UnitOfFontSizeInVmax);
 
     const handleAlertOpen = () => {
@@ -44,7 +48,8 @@ export const FontSizesListMenuItems = React.memo((props) => {
                     fontSize:`${ (+(input.value)).toFixed(1)*basicUnitOfFontSizeInVmax}vmax`,
                 }
             }
-            saveSelectionStateActionWrapper(onToggle)(null, styleName, REGEXP_FONT_SIZE_SUFFIKS);
+            saveSelectionStateActionWrapper(dispatch)(null,DraftInlineStyleToggle({styleName:styleName, regexp: REGEXP_FONT_SIZE_SUFFIKS, id:FindClosestToFocusEditorID()}))
+            //saveSelectionStateActionWrapper(onToggle)(null, styleName, REGEXP_FONT_SIZE_SUFFIKS);
         }
         else{
             handleAlertOpen();
@@ -64,7 +69,9 @@ export const FontSizesListMenuItems = React.memo((props) => {
                     disabled={currentStyle.has(type)}
                     onMouseDown={(e)=>{
                         if (!e.target.disabled)
-                            saveSelectionStateActionWrapper(onToggle)(null, type, REGEXP_FONT_SIZE_SUFFIKS);
+                            saveSelectionStateActionWrapper(dispatch)(null,DraftInlineStyleToggle({styleName:type, regexp: REGEXP_FONT_SIZE_SUFFIKS, id:FindClosestToFocusEditorID()}))
+
+                        //saveSelectionStateActionWrapper(onToggle)(null, type, REGEXP_FONT_SIZE_SUFFIKS);
                     }}
                     type={FONT_SIZE_STYLES.type}>
                     <ListItemIcon>
@@ -75,7 +82,7 @@ export const FontSizesListMenuItems = React.memo((props) => {
             )
         }
         return localret;
-    },[selectedFontSize/*,basicUnitOfFontSizeInVmax*/]);
+    },[selectedFontSize]);
     let inputSize=useMemo(()=>{
         const useStyles = {
             root: {
@@ -110,7 +117,7 @@ export const FontSizesListMenuItems = React.memo((props) => {
             </form>
         )
 
-    },[selectedFontSize, isInputFocused,handleConfirmUserInput/*,basicUnitOfFontSizeInVmax*/]);
+    },[selectedFontSize, isInputFocused,handleConfirmUserInput]);
 
 
     if ((newFontSize!==selectedFontSize)&&(shouldMenuSelectedItemUpdate)) {

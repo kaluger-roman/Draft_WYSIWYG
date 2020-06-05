@@ -15,6 +15,10 @@ import ArrowDownwardRoundedIcon from '@material-ui/icons/ArrowDownwardRounded';
 
 
 import {DraftMainContext} from "../Service&SAGA/Contexts";
+import {DraftInlineStyleToggle} from "../../../redux/actions";
+import {REGEXP_FONT_SIZE_SUFFIKS} from "../../styles/ConstructorStyles/DraftStyles/RegexpForStyleSuffiks";
+import {FindClosestToFocusEditorID} from "../Service&SAGA/DraftUtils/FindClosestToFocusEditor";
+import {useDispatch} from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -49,6 +53,7 @@ export const  ItalicBoldStylesFont=React.memo((props)=> {
     const [onlyPossibleFormat, setOnlyPossibleFormat] =React.useState(null);
     let {onToggle, currentStyle}=props;
     let { saveSelectionStateActionWrapper}=useContext(DraftMainContext);
+    let dispatch=useDispatch();
 
     let allFormatsList=["BOLD","ITALIC","UNDERLINE","CODE"];
     let exclusiveFormatList=['LOWERCASE','UPPERCASE','CAPITALIZE'];
@@ -66,11 +71,15 @@ export const  ItalicBoldStylesFont=React.memo((props)=> {
 
     const handleFormat = (event, newFormats) => {
         let formatToToggle=formats.length>newFormats.length?formats.find((val)=>!newFormats.includes(val)):newFormats.find((val)=>!formats.includes(val));
-        saveSelectionStateActionWrapper(onToggle)(null,formatToToggle,null)
+        saveSelectionStateActionWrapper(dispatch)(null,DraftInlineStyleToggle({styleName:formatToToggle, regexp: null, id:FindClosestToFocusEditorID()}))
+
+        //saveSelectionStateActionWrapper(onToggle)(null,formatToToggle,null)
     };
 
     const handleOnlyPossibleFormat = (event, newFormat) => {
-        saveSelectionStateActionWrapper(onToggle)(null,[onlyPossibleFormat,newFormat],null);
+        saveSelectionStateActionWrapper(dispatch)(null,DraftInlineStyleToggle({styleName:[onlyPossibleFormat,newFormat], regexp: null, id:FindClosestToFocusEditorID()}))
+
+       // saveSelectionStateActionWrapper(onToggle)(null,[onlyPossibleFormat,newFormat],null);
     };
 
     const classes = useStyles();
